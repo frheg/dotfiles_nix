@@ -16,3 +16,10 @@ vim.opt.undofile       = true
 
 vim.g.mapleader      = " "
 vim.g.maplocalleader = " "
+
+vim.filetype.add({
+  extension = {
+    mdx = "markdown.mdx",
+  },
+})
+
