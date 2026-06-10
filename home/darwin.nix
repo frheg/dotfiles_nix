@@ -13,7 +13,7 @@
   # ── macOS zsh additions ───────────────────────────────────────────────────
   programs.zsh = {
     # Ensure Homebrew is in PATH (nix-darwin also handles this, belt-and-suspenders)
-    initExtra = ''
+    initContent = ''
       if [ -x /opt/homebrew/bin/brew ]; then
         eval "$(/opt/homebrew/bin/brew shellenv)"
       fi

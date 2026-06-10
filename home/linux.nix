@@ -13,7 +13,7 @@
   ];
 
   # ── Linux zsh additions ───────────────────────────────────────────────────
-  programs.zsh.initExtra = ''
+  programs.zsh.initContent = ''
     # opencode binary is at ~/.opencode/bin on Linux (set in profileExtra already)
     # If you ever set up xcape for key remapping, add it here:
     # command -v xcape >/dev/null && xcape -e 'Control_L=Escape' &
