@@ -1,51 +1,44 @@
-
 FLAKE := $(shell pwd)
 
 .PHONY: darwin linux hades kratos sync-darwin sync-linux sync-hades sync-kratos update push pull check help
 
 darwin:
-
 	sudo -H nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake $(FLAKE)\#darwin-workstation
 
 linux:
-
 	nix run home-manager -- switch --flake $(FLAKE)\#linux-workstation
 
 hades: darwin
-
 kratos: linux
 
 pull:
-
 	git pull --rebase
 
 sync-darwin: pull darwin
-
 sync-linux: pull linux
-
 sync-hades: sync-darwin
-
 sync-kratos: sync-linux
 
 update:
-
 	nix flake update
 
 push:
-
 	git add -A
-	@read -p "Commit message: " msg; git commit -m "$$msg"
+	@if git diff --cached --quiet; then \
+		echo "nothing to commit"; \
+	else \
+		read -p "Commit message: " msg; \
+		git commit -m "$$msg"; \
+	fi
 	git push
 
 check:
-
 	git status
 	@echo ""
 	@echo "Available flake outputs:"
-	@nix flake show --allow-import-from-derivation
+	@nix flake show
 
 help:
-
 	@echo "make darwin      apply macOS workstation config"
 	@echo "make linux       apply Linux workstation config"
 	@echo "make hades       alias for make darwin"
