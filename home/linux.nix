@@ -1,5 +1,8 @@
 { pkgs, lib, user, ... }: {
 
+  home.username = user;
+  home.homeDirectory = "/home/${user}";
+
   # ── Linux-only packages ───────────────────────────────────────────────────
   # ghostty, discord, thunderbird, nerd-fonts are already in default.nix
   # under lib.optionals pkgs.stdenv.isLinux — add anything extra here.
