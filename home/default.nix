@@ -242,8 +242,8 @@ RISCVEOF
 
 
   # ── TMUX ─────────────────────────────────────────────────────────────────
-  # TPM is replaced by home-manager's native plugin management.
-  # Plugins are sourced automatically — no `run tpm` needed.
+  # Source of truth for tmux. Generated file:
+  # ~/.config/tmux/tmux.conf
   programs.tmux = {
     enable       = true;
     prefix       = "C-a";
@@ -255,52 +255,55 @@ RISCVEOF
     terminal     = "tmux-256color";
 
     plugins = with pkgs.tmuxPlugins; [
-      resurrect          # save/restore sessions
-      continuum          # auto-save sessions
-      battery            # #{battery_percentage}
-      cpu                # #{cpu_percentage} #{ram_percentage} #{gpu_percentage}
-      yank               # system clipboard in copy mode
+      resurrect
+      continuum
+      battery
+      cpu
+      yank
+      net-speed
       {
-        plugin      = catppuccin;
+        plugin = catppuccin;
         extraConfig = ''
-          set -g @catppuccin_flavor              "mocha"
+          set -g @catppuccin_flavor "mocha"
           set -g @catppuccin_window_status_style "rounded"
         '';
       }
     ];
 
     extraConfig = ''
+      ##### QUALITY OF LIFE #####
+      set -g renumber-windows on
       setw -g pane-base-index 1
 
-      # ── Unbind conflicting defaults ────────────────────────────────────
+      ##### UNBIND DEFAULTS THAT CONFLICT #####
       unbind '"'
       unbind %
       unbind o
+
+      ##### PANES: CREATE #####
       unbind v
       unbind s
-
-      # ── Pane: create ──────────────────────────────────────────────────
       bind v split-window -h -c "#{pane_current_path}"
       bind s split-window -v -c "#{pane_current_path}"
 
-      # ── Pane: navigate (vim keys) ─────────────────────────────────────
+      ##### PANES: NAVIGATE #####
       bind h select-pane -L
       bind j select-pane -D
       bind k select-pane -U
       bind l select-pane -R
       bind Tab last-pane
 
-      # ── Pane: resize ──────────────────────────────────────────────────
+      ##### PANES: RESIZE #####
       bind -r H resize-pane -L 5
       bind -r J resize-pane -D 5
       bind -r K resize-pane -U 5
       bind -r L resize-pane -R 5
 
-      # ── Pane: zoom ────────────────────────────────────────────────────
+      ##### PANES: ZOOM #####
       bind z resize-pane -Z
 
-      # ── Windows ───────────────────────────────────────────────────────
-      bind c new-window   -c "#{pane_current_path}"
+      ##### WINDOWS #####
+      bind c new-window -c "#{pane_current_path}"
       bind x kill-window
       bind n next-window
       bind p previous-window
@@ -316,47 +319,54 @@ RISCVEOF
       bind 8 select-window -t 8
       bind 9 select-window -t 9
 
-      # ── Sessions ──────────────────────────────────────────────────────
+      ##### SESSIONS #####
       bind d detach
       bind S choose-tree -Zs
 
-      # ── Reload config ─────────────────────────────────────────────────
+      ##### RELOAD CONFIG #####
       bind r source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded!"
 
-      # ── Popups ────────────────────────────────────────────────────────
+      ##### POPUPS #####
       unbind t
       bind t display-popup -E -w 90% -h 90% "btop"
 
-      bind m run-shell 'tmux has-session -t spotify 2>/dev/null || tmux new-session -d -s spotify spotify_player; tmux display-popup -E "tmux attach -t spotify"'
+      ##### SPOTIFY #####
+      bind m run-shell 'tmux has-session -t spotify 2>/dev/null || tmux new-session -d -s spotify "/bin/zsh -lc spotify_player"; tmux display-popup -E "/bin/zsh -lc \"tmux attach -t spotify\""'
 
-      # ── Status bar ────────────────────────────────────────────────────
-      set  -g status on
-      set  -g status-position     bottom
-      set  -g status-interval     3
-      set  -g status-left-length  80
-      set  -g status-right-length 180
-      set  -g status-justify      left
-      set  -g status-style        "bg=#1e1e2e,fg=#cdd6f4"
+      ##################
+      ### STATUS BAR ###
+      ##################
+      set -g status on
+      set -g status-position top
+      set -g status-interval 3
+      set -g status-left-length 80
+      set -g status-right-length 220
+      set -g status-justify left
+      set -g status-style "bg=default,fg=#6c7086"
 
-      # Left: session + window + pane + current command
-      set -g status-left '#[fg=#11111b,bg=#cba6f7] #S #[fg=#cdd6f4,bg=#313244] #I:#W.#P #{pane_current_command} '
+      set -g status-left ""
 
-      setw -g window-status-format         '#[fg=#cdd6f4,bg=#313244] #I:#W '
-      setw -g window-status-current-format '#[fg=#11111b,bg=#cba6f7] #I:#W '
-      setw -g window-status-separator      ""
+      setw -g window-status-format         '#[fg=#6c7086] #I.#P:#W '
+      setw -g window-status-current-format '#[fg=#cba6f7,bold] #I.#P:#W '
+      setw -g window-status-separator      '#[fg=#313244,nobold]'
 
-      # Right: git branch + CPU + RAM (+ GPU/VRAM on Linux only)
-      set  -g status-right ""
-      set -ag status-right '#[fg=#11111b,bg=#a6e3a1]#(b=$(git -C "#{pane_current_path}" branch --show-current 2>/dev/null); [ -n "$b" ] && printf " git:%s " "$b")'
-      set -ag status-right '#[fg=#11111b,bg=#89b4fa] CPU #{cpu_percentage} '
-      set -ag status-right '#[fg=#11111b,bg=#94e2d5] RAM #{ram_percentage} '
       ${lib.optionalString pkgs.stdenv.isLinux ''
-        set -ag status-right '#[fg=#11111b,bg=#fab387] GPU #{gpu_percentage} '
-        set -ag status-right '#[fg=#11111b,bg=#f38ba8] VRAM #{gram_percentage} '
+        set -g  status-right '#[fg=#89b4fa]cpu #[fg=#a6adc8]#{cpu_percentage}#[fg=#45475a] | '
+        set -ag status-right '#[fg=#94e2d5]ram #[fg=#a6adc8]#(free -h | awk "/^Mem:/ {print \$3\"/\"\$2}")#[fg=#45475a] | '
+        set -ag status-right '#[fg=#b4befe]↓ #[fg=#a6adc8]#{download_speed}#[fg=#45475a] | '
+        set -ag status-right '#[fg=#f5c2e7]↑ #[fg=#a6adc8]#{upload_speed}#[fg=#45475a] | '
+        set -ag status-right '#[fg=#fab387]gpu #[fg=#a6adc8]#{gpu_percentage}#[fg=#45475a] | '
+        set -ag status-right '#[fg=#f38ba8]vram #[fg=#a6adc8]#(nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader,nounits 2>/dev/null | awk -F", *" "{printf \"%.1f/%.1fG\", \$1/1024, \$2/1024}") '
+      ''}
+
+      ${lib.optionalString pkgs.stdenv.isDarwin ''
+        set -g  status-right '#[fg=#89b4fa]cpu #[fg=#a6adc8]#{cpu_percentage}#[fg=#45475a] | '
+        set -ag status-right '#[fg=#94e2d5]mem #[fg=#a6adc8]#(used=$(top -l 1 -s 0 | grep PhysMem | cut -d" " -f2); total=$(( $(sysctl -n hw.memsize) / 1024 / 1024 / 1024 ))G; printf "%s/%s" "$used" "$total")#[fg=#45475a] | '
+        set -ag status-right '#[fg=#b4befe]↓ #[fg=#a6adc8]#{download_speed}#[fg=#45475a] | '
+        set -ag status-right '#[fg=#f5c2e7]↑ #[fg=#a6adc8]#{upload_speed}#[fg=#45475a] | '
       ''}
     '';
   };
-
 
   # ── NEOVIM ───────────────────────────────────────────────────────────────
   # Bare functional config — full setup to follow separately.
