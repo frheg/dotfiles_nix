@@ -434,6 +434,8 @@ RISCVEOF
   home.file.".config/nvim/lua/plugins/lsp.lua".source = ../config/nvim/lua/plugins/lsp.lua;
   home.file.".config/nvim/lua/plugins/format.lua".source = ../config/nvim/lua/plugins/format.lua;
 
+  home.file.".config/nvim/lua/plugins/completion.lua".source = ../config/nvim/lua/plugins/completion.lua;
+
   # ── NEOVIM ───────────────────────────────────────────────────────────────
   # Bare functional config — full setup to follow separately.
   programs.neovim = {
