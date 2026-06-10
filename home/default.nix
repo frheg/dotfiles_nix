@@ -75,6 +75,7 @@
     prettier
     marksman
     taplo
+    tree-sitter
 
     # ── Misc ──────────────────────────────────────────────────────────────
     tesseract         # OCR
