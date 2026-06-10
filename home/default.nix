@@ -9,7 +9,7 @@
     yazi              # file manager TUI
     eza               # better ls
     fd                # better find
-    du-dust           # disk usage visualiser (binary: dust)
+    dust           # disk usage visualiser (binary: dust)
     ncdu              # disk usage TUI
 
     # ── Search & filter ───────────────────────────────────────────────────
