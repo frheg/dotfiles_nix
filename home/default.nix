@@ -409,7 +409,6 @@ RISCVEOF
     '';
   };
 
-  home.file.".config/nvim/init.lua".source = ../config/nvim/init.lua;
   home.file.".config/nvim/lua/core/options.lua".source = ../config/nvim/lua/core/options.lua;
   home.file.".config/nvim/lua/core/keymaps.lua".source = ../config/nvim/lua/core/keymaps.lua;
 
@@ -420,37 +419,10 @@ RISCVEOF
     withPython3 = true;
     enable        = true;
     defaultEditor = true;
+
     initLua = ''
-      -- ── Options ────────────────────────────────────────────────────────
-      vim.opt.number         = true
-      vim.opt.relativenumber = true
-      vim.opt.expandtab      = true
-      vim.opt.tabstop        = 2
-      vim.opt.shiftwidth     = 2
-      vim.opt.scrolloff      = 8
-      vim.opt.signcolumn     = "yes"
-      vim.opt.wrap           = false
-      vim.opt.ignorecase     = true
-      vim.opt.smartcase      = true
-      vim.opt.splitright     = true
-      vim.opt.splitbelow     = true
-      vim.opt.termguicolors  = true
-      vim.opt.clipboard      = "unnamedplus"
-      vim.opt.undofile       = true
-
-      -- ── Leader key ─────────────────────────────────────────────────────
-      vim.g.mapleader      = " "
-      vim.g.maplocalleader = " "
-
-      -- ── Basic keymaps ──────────────────────────────────────────────────
-      local map = vim.keymap.set
-      map("n", "<Esc>",   "<cmd>nohlsearch<CR>")
-      map("n", "<C-h>",   "<C-w>h")
-      map("n", "<C-j>",   "<C-w>j")
-      map("n", "<C-k>",   "<C-w>k")
-      map("n", "<C-l>",   "<C-w>l")
-      map("n", "[d",      vim.diagnostic.goto_prev)
-      map("n", "]d",      vim.diagnostic.goto_next)
+      require("core.options")
+      require("core.keymaps")
     '';
   };
 
