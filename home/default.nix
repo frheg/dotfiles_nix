@@ -453,97 +453,12 @@ RISCVEOF
   # ── GHOSTTY CONFIG ───────────────────────────────────────────────────────
   # macos-* options are conditionally added; Ghostty ignores them on Linux
   # but we explicitly guard them to keep the config clean.
-  home.file.".config/ghostty/config".text = ''
-    theme = catppuccin-mocha
-
-    font-size               = 15
-    font-family             = Iosevka NFM
-    font-family-bold        = Iosevka NFM Bold
-    font-family-italic      = Iosevka NFM Italic
-    font-family-bold-italic = Iosevka NFM Bold Italic
-
-    alpha-blending          = linear-corrected
-    background-opacity      = 1.0
-    mouse-hide-while-typing = true
-    keybind                 = super+r=reload_config
-    cursor-text             = 000000
-
-    ${lib.optionalString pkgs.stdenv.isDarwin ''
-      macos-titlebar-style = hidden
-      macos-option-as-alt  = false
-    ''}
-  '';
+  home.file.".config/ghostty/config".source = ../config/ghostty/config;
 
   # ── Ghostty themes ────────────────────────────────────────────────────────
-  home.file.".config/ghostty/themes/catppuccin-mocha".text = ''
-    background           = 1e1e2e
-    foreground           = cdd6f4
-    cursor-color         = f5e0dc
-    selection-background = 313244
-    selection-foreground = cdd6f4
-    palette = 0=#45475a
-    palette = 1=#f38ba8
-    palette = 2=#a6e3a1
-    palette = 3=#f9e2af
-    palette = 4=#89b4fa
-    palette = 5=#f5c2e7
-    palette = 6=#94e2d5
-    palette = 7=#bac2de
-    palette = 8=#585b70
-    palette = 9=#f38ba8
-    palette = 10=#a6e3a1
-    palette = 11=#f9e2af
-    palette = 12=#89b4fa
-    palette = 13=#f5c2e7
-    palette = 14=#94e2d5
-    palette = 15=#a6adc8
-  '';
+  home.file.".config/ghostty/themes/catppuccin-mocha".source = ../config/ghostty/themes/catppuccin-mocha;
 
-  home.file.".config/ghostty/themes/catppuccin-macchiato".text = ''
-    background           = 24273a
-    foreground           = cad3f5
-    cursor-color         = f4dbd6
-    selection-background = 363a4f
-    selection-foreground = cad3f5
-    palette = 0=#494d64
-    palette = 1=#ed8796
-    palette = 2=#a6da95
-    palette = 3=#eed49f
-    palette = 4=#8aadf4
-    palette = 5=#f5bde6
-    palette = 6=#8bd5ca
-    palette = 7=#b8c0e0
-    palette = 8=#5b6078
-    palette = 9=#ed8796
-    palette = 10=#a6da95
-    palette = 11=#eed49f
-    palette = 12=#8aadf4
-    palette = 13=#f5bde6
-    palette = 14=#8bd5ca
-    palette = 15=#a5adcb
-  '';
+  home.file.".config/ghostty/themes/catppuccin-macchiato".source = ../config/ghostty/themes/catppuccin-macchiato;
 
-  home.file.".config/ghostty/themes/catppuccin-latte".text = ''
-    background           = eff1f5
-    foreground           = 4c4f69
-    cursor-color         = dc8a78
-    selection-background = acb0be
-    selection-foreground = 4c4f69
-    palette = 0=#5c5f77
-    palette = 1=#d20f39
-    palette = 2=#40a02b
-    palette = 3=#df8e1d
-    palette = 4=#1e66f5
-    palette = 5=#ea76cb
-    palette = 6=#179299
-    palette = 7=#acb0be
-    palette = 8=#6c6f85
-    palette = 9=#d20f39
-    palette = 10=#40a02b
-    palette = 11=#df8e1d
-    palette = 12=#1e66f5
-    palette = 13=#ea76cb
-    palette = 14=#179299
-    palette = 15=#bcc0cc
-  '';
+  home.file.".config/ghostty/themes/catppuccin-latte".source = ../config/ghostty/themes/catppuccin-latte;
 }
