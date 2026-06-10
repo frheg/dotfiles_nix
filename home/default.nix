@@ -104,7 +104,7 @@
     '';
 
     # ── .zshrc — interactive shell ─────────────────────────────────────────
-    initExtra = ''
+    initContent = ''
       # ── Prompt ─────────────────────────────────────────────────────────
       PS1="%F{#eed49f}%n%f@%m: %F{#7dc4e4}%1~%f$ "
 
@@ -228,15 +228,15 @@ RISCVEOF
 
   # ── GIT ──────────────────────────────────────────────────────────────────
   programs.git = {
-    enable    = true;
-    userName  = "frheg";
-    # TODO: fill in your email — run: git config --global user.email
-    userEmail = "fredric.hegland@gmail.com";
+    enable = true;
     lfs.enable = true;
-    extraConfig = {
+
+    settings = {
+      user.name = "frheg";
+      user.email = "fredric.hegland@gmail.com";
       init.defaultBranch = "main";
-      pull.rebase        = false;
-      core.editor        = "nvim";
+      pull.rebase = false;
+      core.editor = "nvim";
     };
   };
 
@@ -365,7 +365,7 @@ RISCVEOF
     withPython3 = true;
     enable        = true;
     defaultEditor = true;
-    extraLuaConfig = ''
+    initLua = ''
       -- ── Options ────────────────────────────────────────────────────────
       vim.opt.number         = true
       vim.opt.relativenumber = true
