@@ -357,9 +357,9 @@ RISCVEOF
 
       ${lib.optionalString pkgs.stdenv.isDarwin ''
         set -ag status-right "#[fg=#89b4fa]cpu #[fg=#a6adc8]#(top -l 1 -s 0 | awk '/CPU usage/ {print $3}')#[fg=#45475a] | "
-        set -ag status-right "#[fg=#94e2d5]ram #[fg=#a6adc8]#(top -l 1 -s 0 | awk '/PhysMem/ {gsub(/M/,\"Mi\",$2); print $2}')#[fg=#45475a] | "
-        set -ag status-right "#[fg=#b4befe]↓ #[fg=#a6adc8]#{download_speed}#[fg=#45475a] | "
-        set -ag status-right "#[fg=#f5c2e7]↑ #[fg=#a6adc8]#{upload_speed} "
+        set -ag status-right "#[fg=#94e2d5]ram #[fg=#a6adc8]#(top -l 1 -s 0 | awk '/PhysMem/ {gsub(/M/,\"\",$2); printf \"%.1fGi\", $2/1024}')#[fg=#45475a] | "
+        set -ag status-right "#[fg=#b4befe]↓ #[fg=#a6adc8]#(netstat -ibn | awk '$1 !~ /^lo/ && $7 > 0 {rx+=$7} END {printf \"%.1fG\", rx/1024/1024/1024}')#[fg=#45475a] | "
+        set -ag status-right "#[fg=#f5c2e7]↑ #[fg=#a6adc8]#(netstat -ibn | awk '$1 !~ /^lo/ && $10 > 0 {tx+=$10} END {printf \"%.1fG\", tx/1024/1024/1024}') "
       ''}
 
       ${lib.optionalString pkgs.stdenv.isLinux ''
