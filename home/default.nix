@@ -64,6 +64,18 @@
     # ── Languages ─────────────────────────────────────────────────────────
     zig
 
+    # ── Neovim language servers / formatters ──────────────────────────────
+    nil
+    nixfmt-rfc-style
+    lua-language-server
+    stylua
+    pyright
+    ruff
+    typescript-language-server
+    prettier
+    marksman
+    taplo
+
     # ── Misc ──────────────────────────────────────────────────────────────
     tesseract         # OCR
     sl                # important productivity tool 🚂
@@ -411,6 +423,15 @@ RISCVEOF
 
   home.file.".config/nvim/lua/core/options.lua".source = ../config/nvim/lua/core/options.lua;
   home.file.".config/nvim/lua/core/keymaps.lua".source = ../config/nvim/lua/core/keymaps.lua;
+  home.file.".config/nvim/lua/core/lazy.lua".source = ../config/nvim/lua/core/lazy.lua;
+
+  home.file.".config/nvim/lua/plugins/colorscheme.lua".source = ../config/nvim/lua/plugins/colorscheme.lua;
+  home.file.".config/nvim/lua/plugins/ui.lua".source = ../config/nvim/lua/plugins/ui.lua;
+  home.file.".config/nvim/lua/plugins/telescope.lua".source = ../config/nvim/lua/plugins/telescope.lua;
+  home.file.".config/nvim/lua/plugins/treesitter.lua".source = ../config/nvim/lua/plugins/treesitter.lua;
+  home.file.".config/nvim/lua/plugins/git.lua".source = ../config/nvim/lua/plugins/git.lua;
+  home.file.".config/nvim/lua/plugins/lsp.lua".source = ../config/nvim/lua/plugins/lsp.lua;
+  home.file.".config/nvim/lua/plugins/format.lua".source = ../config/nvim/lua/plugins/format.lua;
 
   # ── NEOVIM ───────────────────────────────────────────────────────────────
   # Bare functional config — full setup to follow separately.
@@ -423,6 +444,7 @@ RISCVEOF
     initLua = ''
       require("core.options")
       require("core.keymaps")
+      require("core.lazy")
     '';
   };
 
