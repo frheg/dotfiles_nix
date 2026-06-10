@@ -246,209 +246,122 @@ RISCVEOF
   # Source of truth for tmux. Generated file:
 
   # ~/.config/tmux/tmux.conf
-
+  home.file.".tmux.conf".source = ../config/tmux/tmux.conf;
   programs.tmux = {
-
-    enable       = true;
-
+    enable       = false;
     prefix       = "C-a";
-
     escapeTime   = 10;
-
     historyLimit = 200000;
-
     mouse        = true;
-
     keyMode      = "vi";
-
     baseIndex    = 1;
-
     terminal     = "tmux-256color";
-
     plugins = with pkgs.tmuxPlugins; [
-
       resurrect
-
       continuum
-
       battery
-
       cpu
-
       yank
-
       net-speed
-
       {
-
         plugin = catppuccin;
-
         extraConfig = ''
-
           set -g @catppuccin_flavor "mocha"
-
           set -g @catppuccin_window_status_style "rounded"
-
         '';
-
       }
-
     ];
-
     extraConfig = ''
-
       ##### QUALITY OF LIFE #####
-
       set -g renumber-windows on
-
       setw -g pane-base-index 1
 
       ##### UNBIND DEFAULTS THAT CONFLICT #####
-
       unbind '"'
-
       unbind %
-
       unbind o
 
       ##### PANES: CREATE #####
-
       unbind v
-
       unbind s
-
       bind v split-window -h -c "#{pane_current_path}"
-
       bind s split-window -v -c "#{pane_current_path}"
 
       ##### PANES: NAVIGATE #####
-
       bind h select-pane -L
-
       bind j select-pane -D
-
       bind k select-pane -U
-
       bind l select-pane -R
-
       bind Tab last-pane
 
       ##### PANES: RESIZE #####
-
       bind -r H resize-pane -L 5
-
       bind -r J resize-pane -D 5
-
       bind -r K resize-pane -U 5
-
       bind -r L resize-pane -R 5
 
       ##### PANES: ZOOM #####
-
       bind z resize-pane -Z
 
       ##### WINDOWS #####
-
       bind c new-window -c "#{pane_current_path}"
-
       bind x kill-window
-
       bind n next-window
-
       bind p previous-window
-
       bind b last-window
-
       bind w choose-tree -Zw
-
       bind 1 select-window -t 1
-
       bind 2 select-window -t 2
-
       bind 3 select-window -t 3
-
       bind 4 select-window -t 4
-
       bind 5 select-window -t 5
-
       bind 6 select-window -t 6
-
       bind 7 select-window -t 7
-
       bind 8 select-window -t 8
-
       bind 9 select-window -t 9
 
       ##### SESSIONS #####
-
       bind d detach
-
       bind S choose-tree -Zs
 
       ##### RELOAD CONFIG #####
-
       bind r source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded!"
 
       ##### POPUPS #####
-
       unbind t
-
       bind t display-popup -E -w 90% -h 90% "btop"
 
       ##### SPOTIFY #####
-
       bind m run-shell 'tmux has-session -t spotify 2>/dev/null || tmux new-session -d -s spotify "/bin/zsh -lc spotify_player"; tmux display-popup -E "/bin/zsh -lc \"tmux attach -t spotify\""'
 
       ##################
-
       ### STATUS BAR ###
-
       ##################
-
       set -g status on
-
       set -g status-position top
-
       set -g status-interval 3
-
       set -g status-left-length 80
-
       set -g status-right-length 220
-
       set -g status-justify left
-
       set -g status-style "bg=default,fg=#6c7086"
-
       set -g status-left ""
-
+      
       setw -g window-status-format         '#[fg=#6c7086] #I.#P:#W '
-
       setw -g window-status-current-format '#[fg=#cba6f7,bold] #I.#P:#W '
-
       setw -g window-status-separator      '#[fg=#313244,nobold]'
-
+      
       ${lib.optionalString pkgs.stdenv.isLinux ''
-
         set -g  status-right '#[fg=#89b4fa]cpu #[fg=#a6adc8]#{cpu_percentage}#[fg=#45475a] | '
-
         set -ag status-right '#[fg=#94e2d5]ram #[fg=#a6adc8]#(free -h | awk "/^Mem:/ {print \$3\"/\"\$2}")#[fg=#45475a] | '
-
         set -ag status-right '#[fg=#b4befe]↓ #[fg=#a6adc8]#{download_speed}#[fg=#45475a] | '
-
         set -ag status-right '#[fg=#f5c2e7]↑ #[fg=#a6adc8]#{upload_speed}#[fg=#45475a] | '
-
         set -ag status-right '#[fg=#fab387]gpu #[fg=#a6adc8]#{gpu_percentage}#[fg=#45475a] | '
-
         set -ag status-right '#[fg=#f38ba8]vram #[fg=#a6adc8]#(nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader,nounits 2>/dev/null | awk -F", *" "{printf \"%.1f/%.1fG\", \$1/1024, \$2/1024}") '
-
       ''}
-
       ${lib.optionalString pkgs.stdenv.isDarwin ''
         set -g  status-right ' #[fg=#94e2d5]mem #(top -l 1 -s 0 | awk "/PhysMem/ {print \$2\"/\"(\$2+\$6)}") '
       ''}
-
     '';
-
   };
 
   # ── NEOVIM ───────────────────────────────────────────────────────────────
