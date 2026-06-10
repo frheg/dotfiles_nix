@@ -113,16 +113,19 @@
       [ -s "$NVM_DIR/nvm.sh" ]          && . "$NVM_DIR/nvm.sh"
       [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
 
-      # ── Conda (managed externally at /opt/miniconda3) ──────────────────
-      __conda_setup="$('/opt/miniconda3/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
-      if [ $? -eq 0 ]; then
-        eval "$__conda_setup"
-      else
-        [ -f "/opt/miniconda3/etc/profile.d/conda.sh" ] \
-          && . "/opt/miniconda3/etc/profile.d/conda.sh" \
-          || export PATH="/opt/miniconda3/bin:$PATH"
-      fi
-      unset __conda_setup
+      # ── Conda (managed externally) ─────────────────────────────────────
+      for conda_root in "$HOME/anaconda3" "$HOME/miniconda3" "/opt/miniconda3"; do
+        if [ -x "$conda_root/bin/conda" ]; then
+          __conda_setup="$("$conda_root/bin/conda" shell.zsh hook 2>/dev/null)"
+          if [ $? -eq 0 ]; then
+            eval "$__conda_setup"
+          elif [ -f "$conda_root/etc/profile.d/conda.sh" ]; then
+            . "$conda_root/etc/profile.d/conda.sh"
+          fi
+          break
+        fi
+      done
+      unset __conda_setup conda_root
       conda deactivate >/dev/null 2>&1 || true
 
       # ── SDKMAN (managed externally) ────────────────────────────────────
