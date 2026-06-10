@@ -3,6 +3,8 @@
   home.username = user;
   home.homeDirectory = "/home/${user}";
 
+  nixpkgs.config.allowUnfree = true;
+
   # ── Linux-only packages ───────────────────────────────────────────────────
   # ghostty, discord, thunderbird, nerd-fonts are already in default.nix
   # under lib.optionals pkgs.stdenv.isLinux — add anything extra here.
