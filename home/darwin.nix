@@ -1,5 +1,9 @@
 { pkgs, lib, user, ... }: {
 
+  home.username      = user;
+  home.homeDirectory = "/Users/${user}";
+
+
   # ── macOS-only packages ───────────────────────────────────────────────────
   home.packages = with pkgs; [
     sketchybar   # status bar (binary; launch agent is in hosts/hades.nix)
