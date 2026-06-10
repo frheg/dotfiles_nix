@@ -3,6 +3,11 @@
   networking.hostName      = "Hades";
   networking.localHostName = "Hades";
 
+
+  # Required by current nix-darwin for user-scoped options
+
+  system.primaryUser = "v1s";
+
   # ── User (required so home-manager can derive homeDirectory) ──────────────
   users.users.v1s = {
     name  = "v1s";

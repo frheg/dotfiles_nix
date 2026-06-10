@@ -366,6 +366,8 @@ RISCVEOF
   # ── NEOVIM ───────────────────────────────────────────────────────────────
   # Bare functional config — full setup to follow separately.
   programs.neovim = {
+    withRuby = true;
+    withPython3 = true;
     enable        = true;
     defaultEditor = true;
     extraLuaConfig = ''
