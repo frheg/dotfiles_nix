@@ -1,44 +1,58 @@
-# ── dotfiles_nix workflow ─────────────────────────────────────────────────
-# Run from the repo root. All commands are idempotent.
 
 FLAKE := $(shell pwd)
 
-.PHONY: hades kratos update push pull sync-hades sync-kratos help
+.PHONY: darwin linux hades kratos sync-darwin sync-linux sync-hades sync-kratos update push pull check help
 
-## Apply config on Hades (macOS)
-hades:
-	darwin-rebuild switch --flake $(FLAKE)\#Hades
+darwin:
 
-## Apply config on Kratos (Linux)
-kratos:
-	home-manager switch --flake $(FLAKE)\#v1s@kratos
+	sudo -H nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake $(FLAKE)\#darwin-workstation
 
-## Bump all Nix inputs to latest nixpkgs — commit flake.lock afterward
+linux:
+
+	nix run home-manager -- switch --flake $(FLAKE)\#linux-workstation
+
+hades: darwin
+
+kratos: linux
+
+pull:
+
+	git pull --rebase
+
+sync-darwin: pull darwin
+
+sync-linux: pull linux
+
+sync-hades: sync-darwin
+
+sync-kratos: sync-linux
+
 update:
+
 	nix flake update
 
-## Commit and push current changes
 push:
+
 	git add -A
 	@read -p "Commit message: " msg; git commit -m "$$msg"
 	git push
 
-## Pull latest from GitHub
-pull:
-	git pull --rebase
+check:
 
-## Pull + apply on macOS
-sync-hades: pull hades
-
-## Pull + apply on Linux
-sync-kratos: pull kratos
+	git status
+	@echo ""
+	@echo "Available flake outputs:"
+	@nix flake show --allow-import-from-derivation
 
 help:
-	@echo ""
-	@echo "  make hades        apply config on macOS (darwin-rebuild)"
-	@echo "  make kratos       apply config on Linux (home-manager)"
-	@echo "  make update       bump flake.lock to latest nixpkgs"
-	@echo "  make push         commit + push"
-	@echo "  make sync-hades   pull + apply on macOS"
-	@echo "  make sync-kratos  pull + apply on Linux"
-	@echo ""
+
+	@echo "make darwin      apply macOS workstation config"
+	@echo "make linux       apply Linux workstation config"
+	@echo "make hades       alias for make darwin"
+	@echo "make kratos      alias for make linux"
+	@echo "make sync-darwin pull + apply macOS config"
+	@echo "make sync-linux  pull + apply Linux config"
+	@echo "make update      update flake.lock"
+	@echo "make push        commit + push"
+	@echo "make check       status + flake outputs"
+

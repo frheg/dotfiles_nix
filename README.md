@@ -1,148 +1,359 @@
 # dotfiles_nix
 
-Unified declarative environment for **Hades** (macOS Apple Silicon) + **Kratos** (Kubuntu x86_64).
+Declarative workstation setup for macOS and Linux using Nix flakes, Home Manager, nix-darwin, Homebrew, and raw config files.
 
-| Tool | Role |
+Current machines:
+
+| Machine | Platform | Flake output |
+|---|---|---|
+| Hades | macOS Apple Silicon | `.#darwin-workstation` |
+| Kratos | Linux x86_64 | `.#linux-workstation` |
+
+Compatibility aliases are kept:
+
+| Old name | New target |
 |---|---|
-| [Nix flakes](https://nixos.wiki/wiki/Flakes) | Package management, reproducible environments |
-| [Home Manager](https://github.com/nix-community/home-manager) | User packages + dotfiles on both systems |
-| [nix-darwin](https://github.com/lnl7/nix-darwin) | macOS system config + Homebrew Cask management |
+| `.#Hades` | `.#darwin-workstation` |
+| `.#v1s@kratos` | `.#linux-workstation` |
 
 ---
 
-## Bootstrap — new machine
+## Core model
 
-### macOS (Hades)
+This repo is the source of truth.
 
-```bash
-# 1. Install Homebrew (required for GUI casks)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+Do not edit generated files in:
 
-# 2. Install Nix (Determinate installer — recommended)
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh
-# Open a new terminal after this step
-
-# 3. Clone the repo
-git clone https://github.com/frheg/dotfiles_nix ~/.config/dotfiles_nix
-cd ~/.config/dotfiles_nix
-
-# 4. First-time nix-darwin install
-# --extra-experimental-features is only needed this one time.
-# After this run, flakes + nix-command are permanently enabled in /etc/nix/nix.conf.
-nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake .#Hades
+```text
+~/.zshrc
+~/.tmux.conf
+~/.config/ghostty/config
+~/.config/aerospace/aerospace.toml
+~/.config/karabiner/karabiner.json
+~/.config/nvim/init.lua
 ```
 
-After the first run, use `make hades` or `darwin-rebuild switch --flake .#Hades`.
+Those files are symlinks created by Home Manager.
 
-### Linux (Kratos)
+Edit files inside this repo, then rebuild.
 
-```bash
-# 1. Run the bootstrap script (apt packages, Docker, Tailscale, Nix, conda, nvm)
-git clone https://github.com/frheg/dotfiles_nix ~/.config/dotfiles_nix
-cd ~/.config/dotfiles_nix
-chmod +x scripts/bootstrap-linux.sh
-./scripts/bootstrap-linux.sh
-
-# 2. Open a new shell, then apply the home-manager config
-home-manager switch --flake .#v1s@kratos
+```text
+repo source files
+    ↓
+Nix / Home Manager
+    ↓
+symlinks into $HOME
+    ↓
+apps read normal config files
 ```
-
-After the first run, use `make kratos` or `home-manager switch --flake .#v1s@kratos`.
 
 ---
 
 ## Daily workflow
 
-```
-make hades        — apply config changes on macOS
-make kratos       — apply config changes on Linux
-make update       — bump nixpkgs to latest (then commit flake.lock)
-make push         — commit + push to GitHub
-make sync-hades   — git pull + apply on macOS
-make sync-kratos  — git pull + apply on Linux
-```
-
-### Adding a package
-
-1. Open `home/default.nix` (both systems) or `home/darwin.nix` / `home/linux.nix`
-2. Add to `home.packages = with pkgs; [ ... your-package ... ]`
-3. Apply: `make hades` or `make kratos`
-4. Commit: `make push`
-5. Other machine: `make sync-kratos` or `make sync-hades`
-
-### Adding a macOS cask
-
-1. Open `hosts/hades.nix`
-2. Add to `homebrew.casks = [ ... "your-cask" ... ]`
-3. Apply: `make hades`
-
-### Changing a config (zsh, tmux, git, neovim…)
-
-1. Edit `home/default.nix`
-2. Apply: `make hades` or `make kratos`
-
-### Updating package versions
+### macOS
 
 ```bash
-make update       # bumps flake.lock to latest nixpkgs
-make hades        # apply on Mac
-make push         # commit new flake.lock
-# on Linux:
-make sync-kratos  # pull + apply
+cd ~/.config/dotfiles_nix
+git pull
+make darwin
+```
+
+Equivalent:
+
+```bash
+make hades
+```
+
+### Linux
+
+```bash
+cd ~/.config/dotfiles_nix
+git pull
+make linux
+```
+
+Equivalent:
+
+```bash
+make kratos
+```
+
+### Commit and push changes
+
+```bash
+cd ~/.config/dotfiles_nix
+git add -A
+git commit -m "describe change"
+git push
+```
+
+Or:
+
+```bash
+make push
+```
+
+---
+
+## Editing configs
+
+Edit repo files only.
+
+| Config | Edit this file |
+|---|---|
+| zsh | `home/default.nix` |
+| aliases | `home/default.nix` |
+| git | `home/default.nix` |
+| packages | `home/default.nix`, `home/darwin.nix`, `home/linux.nix` |
+| tmux | `config/tmux/tmux.conf` |
+| tmux status scripts | `config/tmux/scripts/` |
+| Ghostty | `config/ghostty/config` |
+| Ghostty themes | `config/ghostty/themes/` |
+| AeroSpace | `config/aerospace.toml` |
+| Karabiner | `config/karabiner.json` |
+| SketchyBar | `config/sketchybar/` |
+| Neovim | `home/default.nix` currently |
+
+After editing:
+
+```bash
+make darwin   # macOS
+make linux    # Linux
+```
+
+---
+
+## Adding packages
+
+### Shared package
+
+Edit:
+
+```text
+home/default.nix
+```
+
+Add package to:
+
+```nix
+home.packages = with pkgs; [
+  tree
+];
+```
+
+Apply:
+
+```bash
+make darwin
+make linux
+```
+
+### Linux-only package
+
+Edit:
+
+```text
+home/linux.nix
+```
+
+### macOS-only Nix package
+
+Edit:
+
+```text
+home/darwin.nix
+```
+
+### macOS Homebrew formula or cask
+
+Edit:
+
+```text
+hosts/darwin-workstation.nix
+```
+
+Formula:
+
+```nix
+homebrew.brews = [
+  "zathura"
+];
+```
+
+Cask:
+
+```nix
+homebrew.casks = [
+  "ghostty"
+];
+```
+
+Apply:
+
+```bash
+make darwin
+```
+
+---
+
+## Adding a new machine
+
+Prefer platform/role outputs over hostname-specific configs.
+
+Use this naming style:
+
+```text
+darwin-workstation
+linux-workstation
+linux-ml
+linux-server
+darwin-work
+```
+
+Layering model:
+
+```text
+common
+  ↓
+OS-specific
+  ↓
+role-specific
+  ↓
+host-specific only if needed
+```
+
+Host-specific files should contain only things that are truly local to one machine, such as:
+
+- hostname
+- macOS system defaults
+- Homebrew GUI apps
+- hardware-specific services
+- monitor/window-manager differences
+
+Shared shell, tmux, Ghostty, Neovim, git, and CLI packages should stay common unless there is a real reason to split them.
+
+---
+
+## Bootstrap
+
+### macOS
+
+Install Homebrew:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Install Nix:
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh
+```
+
+Clone repo:
+
+```bash
+git clone https://github.com/frheg/dotfiles_nix ~/.config/dotfiles_nix
+cd ~/.config/dotfiles_nix
+```
+
+Apply:
+
+```bash
+make darwin
+```
+
+### Linux
+
+Clone repo:
+
+```bash
+git clone https://github.com/frheg/dotfiles_nix ~/.config/dotfiles_nix
+cd ~/.config/dotfiles_nix
+```
+
+Run bootstrap:
+
+```bash
+chmod +x scripts/bootstrap-linux.sh
+./scripts/bootstrap-linux.sh
+```
+
+Open a new shell, then apply:
+
+```bash
+make linux
 ```
 
 ---
 
 ## Repo structure
 
-```
+```text
 dotfiles_nix/
-├── flake.nix             Entry point — defines Hades + Kratos configs
-├── flake.lock            Pinned package versions — always commit this
-├── Makefile              Daily workflow commands
+├── flake.nix
+├── flake.lock
+├── Makefile
+├── README.md
 ├── hosts/
-│   └── hades.nix         nix-darwin: homebrew casks, fonts, launchd, system defaults
+│   └── darwin-workstation.nix
 ├── home/
-│   ├── default.nix       Common: packages, zsh, tmux, git, neovim, ghostty
-│   ├── darwin.nix        macOS additions: karabiner, sketchybar, aerospace
-│   └── linux.nix         Linux additions: GUI apps, syncthing systemd service
-├── scripts/
-│   └── bootstrap-linux.sh  One-time setup for a new Kubuntu machine
-└── config/
-    ├── aerospace.toml    AeroSpace config (TODO: add yours)
-    ├── karabiner.json    Karabiner key remapping
-    └── sketchybar/
-        ├── sketchybarrc
-        └── plugins/      battery, clock, front_app, space, volume
+│   ├── default.nix
+│   ├── darwin.nix
+│   └── linux.nix
+├── config/
+│   ├── aerospace.toml
+│   ├── ghostty/
+│   │   ├── config
+│   │   └── themes/
+│   ├── karabiner.json
+│   ├── sketchybar/
+│   └── tmux/
+│       ├── tmux.conf
+│       └── scripts/
+└── scripts/
+    └── bootstrap-linux.sh
 ```
 
 ---
 
-## What Nix manages vs what stays external
+## External tools
 
-### Managed by Nix
-- All CLI tools (zsh, tmux, git, neovim, yazi, btop, lazygit, typst…)
-- Dotfile configs (zshrc, tmux.conf, ghostty, karabiner, sketchybar…)
-- **macOS:** Homebrew Casks (via nix-darwin) + system settings + fonts + launchd agents
-- **Linux:** user packages + syncthing systemd service
+Some tools are intentionally not managed fully by Nix.
 
-### Managed externally — do not touch with Nix
+| Tool | Managed externally because |
+|---|---|
+| Conda | ML environments should remain separate from Nix Python |
+| nvm | Per-project Node versions |
+| SDKMAN | Per-project Java versions |
+| rustup/cargo | Rust toolchain manager |
+| NVIDIA drivers | Kernel-level Linux driver |
+| Docker Engine | Linux system daemon |
+| Tailscale | Linux system service |
 
-| Tool | Location | Why |
-|---|---|---|
-| conda | `/opt/miniconda3` | ML envs; conflicts with Nix Python |
-| nvm | `~/.nvm` | Per-project Node versions |
-| SDKMAN | `~/.sdkman` | Per-project Java versions |
-| rustup / cargo | `~/.cargo` | Rust toolchain manager |
-| NVIDIA drivers | apt | Kernel-level; never manage with Nix |
-| Docker Engine | apt (Linux) | System daemon |
-| Tailscale | apt (Linux) | System service |
+Shell integration for these tools is handled in `home/default.nix`.
 
 ---
 
-## TODOs
+## Updating dependencies
 
-- [ ] **Git email:** edit `home/default.nix` → `programs.git.userEmail`
-- [ ] **AeroSpace config:** run `find ~ -name "aerospace.toml" 2>/dev/null`, copy result to `config/aerospace.toml`, uncomment the line in `home/darwin.nix`
-- [ ] **Neovim:** full plugin config to be set up after initial migration
-- [ ] **`~/.config/zsh/binds.zsh`:** if this file exists and has content, migrate it into `home/default.nix` → `programs.zsh.initExtra`
+```bash
+make update
+make darwin
+make linux
+git add flake.lock
+git commit -m "update nix flake inputs"
+git push
+```
+
+---
+
+## Useful commands
+
+```bash
+make check
+nix flake show
+home-manager news
+```
+
