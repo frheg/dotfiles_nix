@@ -39,7 +39,6 @@
     spotify-player
 
     # ── Documents ─────────────────────────────────────────────────────────
-    zathura           # PDF viewer (poppler backend included in nixpkgs build)
 
     # ── Build tooling ─────────────────────────────────────────────────────
     cmake
@@ -187,9 +186,6 @@ RISCVEOF
       ll = "eza -hlS";
 
       # ── Documents ─────────────────────────────────────────────────────────
-      zat = "zathura";
-      # fuzzy-find PDFs and open with zathura
-      pdf = ''fd -t f "\.pdf$" | sk | xargs -I{} zathura "{}"'';
       fz  = "fzf";
 
       # ── Conda ─────────────────────────────────────────────────────────────

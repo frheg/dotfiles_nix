@@ -46,6 +46,11 @@
     };
 
     brews = [
+      "zathura"
+      "zathura-pdf-mupdf"
+      "zathura-djvu"
+      "zathura-ps"
+      "zathura-cb"
       # opencode not yet packaged in nixpkgs
       "opencode"
     ];
