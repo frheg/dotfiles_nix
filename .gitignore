@@ -1,0 +1,10 @@
+# Nix
+result
+result-*
+.direnv/
+
+# macOS
+.DS_Store
+
+# Local machine overrides (not tracked — put in ~/.config/zsh/local.zsh)
+config/local/

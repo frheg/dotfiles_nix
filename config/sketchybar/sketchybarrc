@@ -1,0 +1,83 @@
+#!/bin/zsh
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+
+##### Bar Appearance #####
+sketchybar --bar \
+    position=top \
+    height=28 \
+    blur_radius=30 \
+    color=0x40000000 \
+    hidden=on \
+    topmost=on \
+    sticky=on
+
+##### Changing Defaults #####
+default=(
+  padding_left=3
+  padding_right=3
+  icon.font="Iosevka Nerd Font:Bold:17.0"
+  label.font="Iosevka Nerd Font:Bold:14.0"
+  icon.color=0xffffffff
+  label.color=0xffffffff
+  icon.padding_left=0
+  icon.padding_right=2
+  label.padding_left=2
+  label.padding_right=2
+)
+sketchybar --default "${default[@]}"
+
+##### AeroSpace Workspace Indicators #####
+sketchybar --add event aerospace_workspace_change
+
+WORKSPACES=("A" "B" "C" "D" "E" "F" "G" "I" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z")
+
+for sid in "${WORKSPACES[@]}"; do
+  sketchybar --add item space.$sid left \
+             --subscribe space.$sid aerospace_workspace_change \
+             --set space.$sid \
+             label="$sid" \
+             background.color=0x40ffffff \
+             background.corner_radius=5 \
+             background.height=25 \
+             script='
+               OCCUPIED=$(aerospace list-workspaces --all --empty no | awk "{print $1}")
+               if [ "$FOCUSED_WORKSPACE" = "'$sid'" ]; then
+                 sketchybar --set $NAME drawing=on background.drawing=on
+               elif echo "$OCCUPIED" | grep -q "^'$sid'$"; then
+                 sketchybar --set $NAME drawing=on background.drawing=off
+               else
+                 sketchybar --set $NAME drawing=off
+               fi' \
+             click_script="aerospace workspace $sid"
+done
+
+##### Left Items #####
+sketchybar --add item chevron left \
+           --set chevron icon= label.drawing=off \
+           --add item front_app left \
+           --set front_app icon.drawing=off script="$PLUGIN_DIR/front_app.sh" \
+           --subscribe front_app front_app_switched
+
+##### Clock #####
+sketchybar --add item clock right \
+           --set clock update_freq=1 icon= script="$PLUGIN_DIR/clock.sh"
+
+##### Stats App Aliases (right side) #####
+# These aliases mirror items from the Stats menu bar app.
+# Names must match exactly — run: sketchybar --query default_menu_items
+STATS_ALIASES=(
+  "Control Center,WiFi"
+  "Control Center,bobko.aerospace"
+  "Control Center,Battery"
+  "Control Center,Network_speed"
+  "Control Center,Sensors_sensors"
+  "Control Center,RAM"
+  "Control Center,GPU_mini"
+  "Control Center,CPU_mini"
+)
+for alias in "${STATS_ALIASES[@]}"; do
+  sketchybar --add alias "$alias" right
+done
+
+##### Finalize #####
+sketchybar --update
