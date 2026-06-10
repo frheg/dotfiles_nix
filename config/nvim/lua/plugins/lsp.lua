@@ -36,6 +36,7 @@ return {
 
       vim.lsp.config("marksman", {
         capabilities = capabilities,
+        filetypes = { "markdown" },
       })
 
       vim.lsp.config("taplo", {
