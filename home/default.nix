@@ -409,6 +409,10 @@ RISCVEOF
     '';
   };
 
+  home.file.".config/nvim/init.lua".source = ../config/nvim/init.lua;
+  home.file.".config/nvim/lua/core/options.lua".source = ../config/nvim/lua/core/options.lua;
+  home.file.".config/nvim/lua/core/keymaps.lua".source = ../config/nvim/lua/core/keymaps.lua;
+
   # ── NEOVIM ───────────────────────────────────────────────────────────────
   # Bare functional config — full setup to follow separately.
   programs.neovim = {
