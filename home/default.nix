@@ -346,22 +346,29 @@ RISCVEOF
       set -g status-right-length 220
       set -g status-justify left
       set -g status-style "bg=default,fg=#6c7086"
+
       set -g status-left ""
-      
-      setw -g window-status-format         '#[fg=#6c7086] #I.#P:#W '
-      setw -g window-status-current-format '#[fg=#cba6f7,bold] #I.#P:#W '
-      setw -g window-status-separator      '#[fg=#313244,nobold]'
-      
-      ${lib.optionalString pkgs.stdenv.isLinux ''
-        set -g  status-right '#[fg=#89b4fa]cpu #[fg=#a6adc8]#{cpu_percentage}#[fg=#45475a] | '
-        set -ag status-right '#[fg=#94e2d5]ram #[fg=#a6adc8]#(free -h | awk "/^Mem:/ {print \$3\"/\"\$2}")#[fg=#45475a] | '
-        set -ag status-right '#[fg=#b4befe]↓ #[fg=#a6adc8]#{download_speed}#[fg=#45475a] | '
-        set -ag status-right '#[fg=#f5c2e7]↑ #[fg=#a6adc8]#{upload_speed}#[fg=#45475a] | '
-        set -ag status-right '#[fg=#fab387]gpu #[fg=#a6adc8]#{gpu_percentage}#[fg=#45475a] | '
-        set -ag status-right '#[fg=#f38ba8]vram #[fg=#a6adc8]#(nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader,nounits 2>/dev/null | awk -F", *" "{printf \"%.1f/%.1fG\", \$1/1024, \$2/1024}") '
-      ''}
+
+      setw -g window-status-format         "#[fg=#6c7086] #I.#P:#W "
+      setw -g window-status-current-format "#[fg=#cba6f7,bold] #I.#P:#W "
+      setw -g window-status-separator      "#[fg=#313244,nobold]"
+
+      set -g status-right ""
+
       ${lib.optionalString pkgs.stdenv.isDarwin ''
-        set -g  status-right ' #[fg=#94e2d5]mem #(top -l 1 -s 0 | awk "/PhysMem/ {print \$2\"/\"(\$2+\$6)}") '
+        set -ag status-right "#[fg=#89b4fa]cpu #[fg=#a6adc8]#(top -l 1 -s 0 | awk '/CPU usage/ {print $3}')#[fg=#45475a] | "
+        set -ag status-right "#[fg=#94e2d5]ram #[fg=#a6adc8]#(top -l 1 -s 0 | awk '/PhysMem/ {gsub(/M/,\"Mi\",$2); print $2}')#[fg=#45475a] | "
+        set -ag status-right "#[fg=#b4befe]↓ #[fg=#a6adc8]#{download_speed}#[fg=#45475a] | "
+        set -ag status-right "#[fg=#f5c2e7]↑ #[fg=#a6adc8]#{upload_speed} "
+      ''}
+
+      ${lib.optionalString pkgs.stdenv.isLinux ''
+        set -ag status-right "#[fg=#89b4fa]cpu #[fg=#a6adc8]#{cpu_percentage}#[fg=#45475a] | "
+        set -ag status-right "#[fg=#94e2d5]ram #[fg=#a6adc8]#(free -h | awk '/^Mem:/ {print $3\"/\"$2}')#[fg=#45475a] | "
+        set -ag status-right "#[fg=#b4befe]↓ #[fg=#a6adc8]#{download_speed}#[fg=#45475a] | "
+        set -ag status-right "#[fg=#f5c2e7]↑ #[fg=#a6adc8]#{upload_speed}#[fg=#45475a] | "
+        set -ag status-right "#[fg=#fab387]gpu #[fg=#a6adc8]#{gpu_percentage}#[fg=#45475a] | "
+        set -ag status-right "#[fg=#f38ba8]vram #[fg=#a6adc8]#(nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader,nounits 2>/dev/null | awk -F', *' '{printf \"%.1f/%.1fG\", $1/1024, $2/1024}') "
       ''}
     '';
   };
