@@ -378,11 +378,11 @@ RISCVEOF
       ''}
 
       ${lib.optionalString pkgs.stdenv.isLinux ''
-        set -ag status-right "#[fg=#89b4fa]cpu #[fg=#a6adc8]#{cpu_percentage}#[fg=#45475a] | "
+        set -ag status-right "#[fg=#89b4fa]cpu #[fg=#a6adc8]#(top -bn1 | awk '/Cpu\(s\)/ {print $2\"%\"}')#[fg=#45475a] | "
         set -ag status-right "#[fg=#94e2d5]ram #[fg=#a6adc8]#(free -h | awk '/^Mem:/ {print $3\"/\"$2}')#[fg=#45475a] | "
         set -ag status-right "#[fg=#b4befe]↓ #[fg=#a6adc8]#{download_speed}#[fg=#45475a] | "
         set -ag status-right "#[fg=#f5c2e7]↑ #[fg=#a6adc8]#{upload_speed}#[fg=#45475a] | "
-        set -ag status-right "#[fg=#fab387]gpu #[fg=#a6adc8]#{gpu_percentage}#[fg=#45475a] | "
+        set -ag status-right "#[fg=#fab387]gpu #[fg=#a6adc8]#(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null | awk '{print $1\"%\"}')#[fg=#45475a] | "
         set -ag status-right "#[fg=#f38ba8]vram #[fg=#a6adc8]#(nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader,nounits 2>/dev/null | awk -F', *' '{printf \"%.1f/%.1fG\", $1/1024, $2/1024}') "
       ''}
     '';
