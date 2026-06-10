@@ -249,9 +249,8 @@ RISCVEOF
   # Source of truth for tmux. Generated file:
 
   # ~/.config/tmux/tmux.conf
-  home.file.".tmux.conf".source = ../config/tmux/tmux.conf;
   programs.tmux = {
-    enable       = false;
+    enable       = true;
     prefix       = "C-a";
     escapeTime   = 10;
     historyLimit = 200000;
