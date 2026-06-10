@@ -94,5 +94,4 @@ return {
     keys = {
       { "<leader>gg", "<cmd>Git<CR>", desc = "Git status" },
     },
-  },
-}
+  }
