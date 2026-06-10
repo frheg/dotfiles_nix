@@ -1,0 +1,17 @@
+theme = catppuccin-mocha
+
+font-size               = 15
+font-family             = Iosevka NFM
+font-family-bold        = Iosevka NFM Bold
+font-family-italic      = Iosevka NFM Italic
+font-family-bold-italic = Iosevka NFM Bold Italic
+
+alpha-blending          = linear-corrected
+background-opacity      = 0.95
+mouse-hide-while-typing = true
+keybind                 = super+r=reload_config
+cursor-text             = 000000
+
+macos-titlebar-style = hidden
+macos-option-as-alt  = false
+
