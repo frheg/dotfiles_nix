@@ -1,7 +1,7 @@
 { pkgs, lib, user, ... }: {
 
   home.username      = user;
-  home.homeDirectory = "/Users/${user}";
+  home.homeDirectory = lib.mkForce "/Users/${user}";
 
 
   # ── macOS-only packages ───────────────────────────────────────────────────

@@ -3,6 +3,13 @@
   networking.hostName      = "Hades";
   networking.localHostName = "Hades";
 
+  # ── User (required so home-manager can derive homeDirectory) ──────────────
+  users.users.v1s = {
+    name  = "v1s";
+    home  = "/Users/v1s";
+    shell = pkgs.zsh;
+  };
+
   # ── Nix settings ──────────────────────────────────────────────────────────
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
