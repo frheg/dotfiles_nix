@@ -48,7 +48,7 @@
 
     # ── Productivity ──────────────────────────────────────────────────────
     fastfetch
-    thefuck
+    pay-respects
     watchexec
     pandoc
 
