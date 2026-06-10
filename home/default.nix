@@ -68,7 +68,7 @@
     nil
     nixfmt
     lua-language-server
-    styluaj
+    stylua
     pyright
     ruff
     typescript-language-server
