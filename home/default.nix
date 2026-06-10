@@ -244,6 +244,21 @@ RISCVEOF
   };
 
 
+  home.file.".config/tmux/scripts/mem-macos.sh" = {
+    source = ../config/tmux/scripts/mem-macos.sh;
+    executable = true;
+  };
+
+  home.file.".config/tmux/scripts/net-down.sh" = {
+    source = ../config/tmux/scripts/net-down.sh;
+    executable = true;
+  };
+
+  home.file.".config/tmux/scripts/net-up.sh" = {
+    source = ../config/tmux/scripts/net-up.sh;
+    executable = true;
+  };
+
   # ── TMUX ─────────────────────────────────────────────────────────────────
 
   # Source of truth for tmux. Generated file:
@@ -357,7 +372,7 @@ RISCVEOF
 
       ${lib.optionalString pkgs.stdenv.isDarwin ''
         set -ag status-right "#[fg=#89b4fa]cpu #[fg=#a6adc8]#(top -l 1 -s 0 | awk '/CPU usage/ {print $3}')#[fg=#45475a] | "
-                set -ag status-right "#[fg=#94e2d5]ram #[fg=#a6adc8]#(vm_stat | awk '/Pages active/ {a=$3} /Pages wired/ {w=$4} /Pages compressed/ {c=$3} END {gsub(/\./,\"\",a); gsub(/\./,\"\",w); gsub(/\./,\"\",c); printf \"%.1fGi\", (a+w+c)*4096/1024/1024/1024}')#[fg=#45475a] | "
+        set -ag status-right "#[fg=#94e2d5]ram #[fg=#a6adc8]#(~/.config/tmux/scripts/mem-macos.sh)#[fg=#45475a] | "
         set -ag status-right "#[fg=#b4befe]↓ #[fg=#a6adc8]#(~/.config/tmux/scripts/net-down.sh)#[fg=#45475a] | "
         set -ag status-right "#[fg=#f5c2e7]↑ #[fg=#a6adc8]#(~/.config/tmux/scripts/net-up.sh) "
       ''}
