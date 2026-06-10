@@ -5,15 +5,16 @@ return {
     config = function()
       require("lualine").setup({
         options = {
-          theme = "catppuccin",
+          theme = "auto",
           globalstatus = true,
         },
       })
     end,
   },
+
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
-    config = true,
+    opts = {},
   },
 }
