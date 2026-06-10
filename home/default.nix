@@ -445,13 +445,13 @@ RISCVEOF
 
       ${lib.optionalString pkgs.stdenv.isDarwin ''
 
-        set -g  status-right '#[fg=#89b4fa]cpu #[fg=#a6adc8]#{cpu_percentage}#[fg=#45475a] | '
+        set -g  status-right '#[fg=#89b4fa]cpu #[fg=#a6adc8]#(ps -A -o %cpu | awk "{s+=\$1} END {printf \"%.0f%%\", s}")#[fg=#45475a] | '
 
-        set -ag status-right '#[fg=#94e2d5]mem #[fg=#a6adc8]#(used=$(top -l 1 -s 0 | grep PhysMem | cut -d" " -f2); total=$(( $(sysctl -n hw.memsize) / 1024 / 1024 / 1024 ))G; printf "%s/%s" "$used" "$total")#[fg=#45475a] | '
+        set -ag status-right '#[fg=#94e2d5]mem #[fg=#a6adc8]#(vm_stat | awk "/Pages active/ {a=\$3} /Pages wired/ {w=\$4} /Pages compressed/ {c=\$3} END {gsub(/\\./,\"\",a); gsub(/\\./,\"\",w); gsub(/\\./,\"\",c); used=(a+w+c)*4096/1024/1024/1024; printf \"%.1fG\", used}")/$(($(sysctl -n hw.memsize)/1024/1024/1024))G#[fg=#45475a] | '
 
-        set -ag status-right '#[fg=#b4befe]↓ #[fg=#a6adc8]#{download_speed}#[fg=#45475a] | '
+        set -ag status-right '#[fg=#b4befe]↓ #[fg=#a6adc8]#(netstat -ibn | awk "\$1 !~ /^lo/ && \$7 > 0 {rx+=\$7} END {printf \"rx %.1fG\", rx/1024/1024/1024}")#[fg=#45475a] | '
 
-        set -ag status-right '#[fg=#f5c2e7]↑ #[fg=#a6adc8]#{upload_speed}#[fg=#45475a] | '
+        set -ag status-right '#[fg=#f5c2e7]↑ #[fg=#a6adc8]#(netstat -ibn | awk "\$1 !~ /^lo/ && \$10 > 0 {tx+=\$10} END {printf \"tx %.1fG\", tx/1024/1024/1024}")#[fg=#45475a] | '
 
       ''}
 
