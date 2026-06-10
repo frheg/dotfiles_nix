@@ -19,6 +19,13 @@
 
   # ── Linux zsh additions ───────────────────────────────────────────────────
   programs.zsh.initContent = ''
+    # SSH agent
+    if [ -z "$SSH_AUTH_SOCK" ]; then
+      eval "$(ssh-agent -s)" >/dev/null
+    fi
+
+    ssh-add -l >/dev/null 2>&1 || ssh-add ~/.ssh/id_ed25519 >/dev/null 2>&1
+
     # opencode binary is at ~/.opencode/bin on Linux (set in profileExtra already)
     # If you ever set up xcape for key remapping, add it here:
     # command -v xcape >/dev/null && xcape -e 'Control_L=Escape' &
