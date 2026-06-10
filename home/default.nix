@@ -66,9 +66,9 @@
 
     # ── Neovim language servers / formatters ──────────────────────────────
     nil
-    nixfmt-rfc-style
+    nixfmt
     lua-language-server
-    stylua
+    styluaj
     pyright
     ruff
     typescript-language-server
