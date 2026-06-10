@@ -336,15 +336,7 @@ RISCVEOF
       unbind t
       bind t display-popup -E -w 90% -h 90% "btop"
 
-      bind m run-shell '
-        if [ "#{session_name}" = "spotify" ]; then
-          tmux display-message "Already in spotify — prefix+d to detach"
-        else
-          tmux has-session -t spotify 2>/dev/null \
-            || tmux new-session -d -s spotify "/bin/zsh -lc spotify_player"
-          tmux display-popup -E "/bin/zsh -lc '\''tmux attach -t spotify'\''"
-        fi
-      '
+      bind m run-shell 'tmux has-session -t spotify 2>/dev/null || tmux new-session -d -s spotify spotify_player; tmux display-popup -E "tmux attach -t spotify"'
 
       # ── Status bar ────────────────────────────────────────────────────
       set  -g status on

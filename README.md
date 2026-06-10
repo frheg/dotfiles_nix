@@ -27,7 +27,9 @@ git clone https://github.com/frheg/dotfiles_nix ~/.config/dotfiles_nix
 cd ~/.config/dotfiles_nix
 
 # 4. First-time nix-darwin install
-nix run nix-darwin -- switch --flake .#Hades
+# --extra-experimental-features is only needed this one time.
+# After this run, flakes + nix-command are permanently enabled in /etc/nix/nix.conf.
+nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake .#Hades
 ```
 
 After the first run, use `make hades` or `darwin-rebuild switch --flake .#Hades`.
