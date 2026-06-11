@@ -24,15 +24,15 @@ return {
       }
 
       dashboard.section.buttons.val = {
-        dashboard.button("f", "Find file", ":Telescope find_files<CR>"),
-        dashboard.button("g", "Live grep", ":Telescope live_grep<CR>"),
-        dashboard.button("e", "File explorer", ":Oil<CR>"),
-        dashboard.button("r", "Recent files", ":Telescope oldfiles<CR>"),
-        dashboard.button("c", "Edit Neovim config", ":e ~/.config/dotfiles_nix/config/nvim/init.lua<CR>"),
-        dashboard.button("d", "Open dotfiles", ":cd ~/.config/dotfiles_nix | Oil<CR>"),
-        dashboard.button("l", "Lazy plugins", ":Lazy<CR>"),
-        dashboard.button("h", "Healthcheck", ":checkhealth<CR>"),
-        dashboard.button("q", "Quit", ":qa<CR>"),
+        dashboard.button("f", "Find file", "<cmd>Telescope find_files<CR>"),
+        dashboard.button("g", "Live grep", "<cmd>Telescope live_grep<CR>"),
+        dashboard.button("e", "File explorer", "<cmd>Oil<CR>"),
+        dashboard.button("r", "Recent files", "<cmd>Telescope oldfiles<CR>"),
+        dashboard.button("c", "Edit Neovim config", "<cmd>e ~/.config/dotfiles_nix/config/nvim/init.lua<CR>"),
+        dashboard.button("d", "Open dotfiles", "<cmd>cd ~/.config/dotfiles_nix | Oil<CR>"),
+        dashboard.button("l", "Lazy plugins", "<cmd>Lazy<CR>"),
+        dashboard.button("h", "Healthcheck", "<cmd>checkhealth<CR>"),
+        dashboard.button("q", "Quit", "<cmd>qa<CR>"),
       }
 
       dashboard.section.footer.val = function()
