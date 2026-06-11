@@ -1,16 +1,10 @@
 FLAKE := $(shell pwd)
 
-.PHONY: \
-	darwin linux hades kratos \
-	sync-darwin sync-linux sync-hades sync-kratos \
-	update push pull check doctor rebuild \
-	nvim-sync nvim-clean nvim-reset \
-	help
+.PHONY: darwin linux hades kratos sync-darwin sync-linux sync-hades sync-kratos update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync docs
 
 # ─────────────────────────────────────────────────────────────
 # System rebuilds
 # ─────────────────────────────────────────────────────────────
-
 darwin:
 	sudo -H nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake $(FLAKE)\#darwin-workstation
 
@@ -30,7 +24,6 @@ rebuild:
 # ─────────────────────────────────────────────────────────────
 # Sync
 # ─────────────────────────────────────────────────────────────
-
 pull:
 	git pull --rebase
 
@@ -45,14 +38,12 @@ sync-kratos: sync-linux
 # ─────────────────────────────────────────────────────────────
 # Updates
 # ─────────────────────────────────────────────────────────────
-
 update:
 	nix flake update
 
 # ─────────────────────────────────────────────────────────────
 # Git helpers
 # ─────────────────────────────────────────────────────────────
-
 push:
 	git add -A
 	@if git diff --cached --quiet; then \
@@ -66,7 +57,6 @@ push:
 # ─────────────────────────────────────────────────────────────
 # Neovim
 # ─────────────────────────────────────────────────────────────
-
 nvim-sync:
 	nvim --headless "+Lazy! sync" +qa
 
@@ -82,7 +72,6 @@ nvim-reset:
 # ─────────────────────────────────────────────────────────────
 # Diagnostics
 # ─────────────────────────────────────────────────────────────
-
 check:
 	@echo ""
 	@echo "── Git ───────────────────────────────────────"
@@ -123,9 +112,47 @@ doctor:
 	@echo "Nvim data:"
 	@echo $$HOME/.local/share/nvim
 
+# ─────────────────────────────────────────────
+# Rollback / generations / cleanup
+# ─────────────────────────────────────────────
+generations:
+	@if [[ "$$(uname)" == "Darwin" ]]; then \
+		echo "── nix-darwin generations ──"; \
+		darwin-rebuild --list-generations; \
+	else \
+		echo "── Home Manager generations ──"; \
+		home-manager generations; \
+	fi
+
+rollback:
+	@if [[ "$$(uname)" == "Darwin" ]]; then \
+		echo "Rolling back nix-darwin system generation..."; \
+		sudo darwin-rebuild --rollback; \
+	else \
+		echo "Home Manager rollback is manual."; \
+		echo ""; \
+		echo "Run:"; \
+		echo "  home-manager generations"; \
+		echo ""; \
+		echo "Then activate one:"; \
+		echo "  /nix/store/<generation-path>/activate"; \
+	fi
+
+gc-dry:
+	nix store gc --dry-run
+
+gc:
+	nix-collect-garbage
+
+gc-delete-old:
+	nix-collect-garbage -d
+
 # ─────────────────────────────────────────────────────────────
 # Help
 # ─────────────────────────────────────────────────────────────
+docs:
+	@echo "── Documentation ─────────────────────────────"
+	@find docs -type f | sort
 
 help:
 	@echo ""
@@ -165,4 +192,19 @@ help:
 	@echo "  New machine sync -> make sync-darwin or make sync-linux"
 	@echo "  Broken Neovim plugins -> make nvim-reset"
 	@echo ""
-
+	@echo "Rollback / cleanup:"
+	@echo "  make generations   List nix-darwin or Home Manager generations"
+	@echo "  make rollback      Roll back macOS automatically; print Linux HM rollback instructions"
+	@echo "  make gc-dry        Show what Nix garbage collection would remove"
+	@echo "  make gc            Run safe garbage collection without deleting generation history"
+	@echo "  make gc-delete-old Delete old generations and remove rollback history"
+	@echo ""
+	@echo "Rollback / cleanup:"
+	@echo "  make generations   List nix generations"
+	@echo "  make rollback      Roll back current generation"
+	@echo "  make gc-dry        Preview garbage collection"
+	@echo "  make gc            Safe garbage collection"
+	@echo "  make gc-delete-old Delete old generations"
+	@echo ""
+	@echo "Documentation:"
+	@echo "  make docs          List repository documentation"
