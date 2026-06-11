@@ -61,3 +61,17 @@ elseif vim.fn.executable("wl-copy") == 1 then
     cache_enabled = 0,
   }
 end
+
+vim.api.nvim_create_user_command("LazyGitPopup", function()
+  vim.fn.system({
+    "tmux",
+    "display-popup",
+    "-E",
+    "-w",
+    "90%",
+    "-h",
+    "90%",
+    "lazygit",
+  })
+end, {})
+

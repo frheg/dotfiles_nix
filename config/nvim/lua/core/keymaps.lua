@@ -11,3 +11,4 @@ map("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
 map("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
 
 map("n", "<leader>sm", "<cmd>messages<CR>", { desc = "Show messages" })
+map("n", "<leader>gg", "<cmd>LazyGitPopup<CR>", { desc = "Open lazygit popup" })

@@ -12,19 +12,6 @@ return {
       local alpha = require("alpha")
       local dashboard = require("alpha.themes.dashboard")
 
-      vim.api.nvim_create_user_command("LazyGitPopup", function()
-        vim.fn.system({
-          "tmux",
-          "display-popup",
-          "-E",
-          "-w",
-          "90%",
-          "-h",
-          "90%",
-          "lazygit",
-        })
-      end, {})
-
       local function cmd_output(cmd)
         local handle = io.popen(cmd)
         if handle == nil then
