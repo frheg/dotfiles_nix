@@ -85,7 +85,6 @@ return {
         dashboard.button("r", "Recent files", "<cmd>Telescope oldfiles<CR>"),
         dashboard.button("c", "Edit Neovim config", "<cmd>e ~/.config/dotfiles_nix/config/nvim/init.lua<CR>"),
         dashboard.button("d", "Open dotfiles", "<cmd>cd ~/.config/dotfiles_nix | Yazi<CR>"),
-        dashboard.button("z", "Lazygit", "<cmd>LazyGitPopup<CR>"),
         dashboard.button("p", "Plugins", "<cmd>Lazy<CR>"),
         dashboard.button("h", "Healthcheck", "<cmd>checkhealth<CR>"),
         dashboard.button("q", "Quit", "<cmd>qa<CR>"),

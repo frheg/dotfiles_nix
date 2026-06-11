@@ -63,6 +63,24 @@ elseif vim.fn.executable("wl-copy") == 1 then
 end
 
 vim.api.nvim_create_user_command("LazyGitPopup", function()
+  local file_dir = vim.fn.expand("%:p:h")
+
+  if file_dir == "" then
+    file_dir = vim.fn.getcwd()
+  end
+
+  local git_root = vim.fn.systemlist({
+    "git",
+    "-C",
+    file_dir,
+    "rev-parse",
+    "--show-toplevel",
+  })[1]
+
+  if vim.v.shell_error ~= 0 or git_root == nil or git_root == "" then
+    git_root = vim.fn.getcwd()
+  end
+
   vim.fn.system({
     "tmux",
     "display-popup",
@@ -71,7 +89,8 @@ vim.api.nvim_create_user_command("LazyGitPopup", function()
     "90%",
     "-h",
     "90%",
+    "-d",
+    git_root,
     "lazygit",
   })
 end, {})
-
