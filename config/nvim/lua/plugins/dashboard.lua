@@ -48,6 +48,23 @@ return {
         return vim.fn.fnamemodify(vim.fn.getcwd(), ":~")
       end
 
+      local function footer_line(label, value, label_hl, value_hl)
+        local line = string.format("%-8s │ %s", label, value)
+
+        return {
+          type = "text",
+          val = line,
+          opts = {
+            position = "left",
+            hl = {
+              { label_hl, 0, 8 },
+              { "AlphaFooterPipe", 9, 10 },
+              { value_hl, 12, -1 },
+            },
+          },
+        }
+      end
+
       dashboard.section.header.val = {
         "                                                     ",
         " ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗ ",
@@ -66,7 +83,7 @@ return {
         dashboard.button("r", "Recent files", "<cmd>Telescope oldfiles<CR>"),
         dashboard.button("c", "Edit Neovim config", "<cmd>e ~/.config/dotfiles_nix/config/nvim/init.lua<CR>"),
         dashboard.button("d", "Open dotfiles", "<cmd>cd ~/.config/dotfiles_nix | Yazi<CR>"),
-        dashboard.button("z", "Lazygit", "<cmd>silent !tmux display-popup -E -w 90% -h 90% lazygit<CR>"),
+        dashboard.button("z", "Lazygit", "<cmd>silent !tmux display-popup -E -w 90%% -h 90%% lazygit<CR>"),
         dashboard.button("p", "Plugins", "<cmd>Lazy<CR>"),
         dashboard.button("h", "Healthcheck", "<cmd>checkhealth<CR>"),
         dashboard.button("q", "Quit", "<cmd>qa<CR>"),
@@ -75,61 +92,38 @@ return {
       local stats = require("lazy").stats()
       local startup = math.floor(stats.startuptime * 100) / 100
 
-      local footer_host = {
-        type = "text",
-        val = "host    " .. hostname(),
-        opts = {
-          position = "center",
-          hl = "AlphaFooterHost",
-        },
-      }
-
-      local footer_cwd = {
-        type = "text",
-        val = "cwd     " .. cwd(),
-        opts = {
-          position = "center",
-          hl = "AlphaFooterCwd",
-        },
-      }
-
-      local footer_git = {
-        type = "text",
-        val = "git     " .. git_branch() .. " [" .. git_state() .. "]",
-        opts = {
-          position = "center",
-          hl = "AlphaFooterGit",
-        },
-      }
-
-      local footer_plugins = {
-        type = "text",
-        val = "plugins " .. stats.loaded .. "/" .. stats.count .. " loaded in " .. startup .. " ms",
-        opts = {
-          position = "center",
-          hl = "AlphaFooterPlugins",
-        },
-      }
-
-      local footer_time = {
-        type = "text",
-        val = "time    " .. os.date("%Y-%m-%d %H:%M"),
-        opts = {
-          position = "center",
-          hl = "AlphaFooterTime",
-        },
-      }
+      local footer_host = footer_line("host", hostname(), "AlphaFooterHostLabel", "AlphaFooterHostValue")
+      local footer_cwd = footer_line("cwd", cwd(), "AlphaFooterCwdLabel", "AlphaFooterCwdValue")
+      local footer_git = footer_line("git", git_branch() .. " [" .. git_state() .. "]", "AlphaFooterGitLabel", "AlphaFooterGitValue")
+      local footer_plugins = footer_line(
+        "plugins",
+        stats.loaded .. "/" .. stats.count .. " loaded in " .. startup .. " ms",
+        "AlphaFooterPluginsLabel",
+        "AlphaFooterPluginsValue"
+      )
+      local footer_time = footer_line("time", os.date("%d.%m.%Y %H:%M:%S"), "AlphaFooterTimeLabel", "AlphaFooterTimeValue")
 
       -- Catppuccin/tmux-style dashboard colors.
       vim.api.nvim_set_hl(0, "AlphaHeader", { fg = "#89b4fa" })
       vim.api.nvim_set_hl(0, "AlphaButtons", { fg = "#cdd6f4" })
       vim.api.nvim_set_hl(0, "AlphaShortcut", { fg = "#cba6f7", bold = true })
 
-      vim.api.nvim_set_hl(0, "AlphaFooterHost", { fg = "#89b4fa" })
-      vim.api.nvim_set_hl(0, "AlphaFooterCwd", { fg = "#94e2d5" })
-      vim.api.nvim_set_hl(0, "AlphaFooterGit", { fg = "#b4befe" })
-      vim.api.nvim_set_hl(0, "AlphaFooterPlugins", { fg = "#f5c2e7" })
-      vim.api.nvim_set_hl(0, "AlphaFooterTime", { fg = "#fab387" })
+      vim.api.nvim_set_hl(0, "AlphaFooterPipe", { fg = "#45475a" })
+
+      vim.api.nvim_set_hl(0, "AlphaFooterHostLabel", { fg = "#89b4fa" })
+      vim.api.nvim_set_hl(0, "AlphaFooterHostValue", { fg = "#a6adc8" })
+
+      vim.api.nvim_set_hl(0, "AlphaFooterCwdLabel", { fg = "#94e2d5" })
+      vim.api.nvim_set_hl(0, "AlphaFooterCwdValue", { fg = "#a6adc8" })
+
+      vim.api.nvim_set_hl(0, "AlphaFooterGitLabel", { fg = "#b4befe" })
+      vim.api.nvim_set_hl(0, "AlphaFooterGitValue", { fg = "#a6adc8" })
+
+      vim.api.nvim_set_hl(0, "AlphaFooterPluginsLabel", { fg = "#f5c2e7" })
+      vim.api.nvim_set_hl(0, "AlphaFooterPluginsValue", { fg = "#a6adc8" })
+
+      vim.api.nvim_set_hl(0, "AlphaFooterTimeLabel", { fg = "#fab387" })
+      vim.api.nvim_set_hl(0, "AlphaFooterTimeValue", { fg = "#a6adc8" })
 
       dashboard.section.header.opts.hl = "AlphaHeader"
       dashboard.section.buttons.opts.hl = "AlphaButtons"
