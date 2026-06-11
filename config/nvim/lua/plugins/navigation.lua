@@ -1,23 +1,35 @@
 return {
   {
-    "stevearc/oil.nvim",
-    cmd = "Oil",
-    keys = {
-      { "<leader>e", "<cmd>Oil<CR>", desc = "Open file explorer" },
+    "mikavilpas/yazi.nvim",
+
+    event = "VeryLazy",
+
+    dependencies = {
+      "nvim-lua/plenary.nvim",
     },
-    opts = {
-      default_file_explorer = true,
-      columns = {
-        "icon",
-        "permissions",
-        "size",
-        "mtime",
+
+    keys = {
+      {
+        "<leader>e",
+        "<cmd>Yazi<CR>",
+        desc = "Open Yazi file explorer",
       },
-      view_options = {
-        show_hidden = true,
+      {
+        "<leader>E",
+        "<cmd>Yazi cwd<CR>",
+        desc = "Open Yazi in cwd",
+      },
+    },
+
+    opts = {
+      open_for_directories = true,
+
+      keymaps = {
+        show_help = "<f1>",
       },
     },
   },
+
   {
     "folke/flash.nvim",
     event = "VeryLazy",

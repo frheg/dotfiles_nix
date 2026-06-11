@@ -26,10 +26,10 @@ return {
       dashboard.section.buttons.val = {
         dashboard.button("f", "Find file", "<cmd>Telescope find_files<CR>"),
         dashboard.button("g", "Live grep", "<cmd>Telescope live_grep<CR>"),
-        dashboard.button("e", "File explorer", "<cmd>Oil<CR>"),
+        dashboard.button("e", "Yazi file explorer", "<cmd>Yazi<CR>"),
         dashboard.button("r", "Recent files", "<cmd>Telescope oldfiles<CR>"),
         dashboard.button("c", "Edit Neovim config", "<cmd>e ~/.config/dotfiles_nix/config/nvim/init.lua<CR>"),
-        dashboard.button("d", "Open dotfiles", "<cmd>cd ~/.config/dotfiles_nix | Oil<CR>"),
+        dashboard.button("d", "Open dotfiles", "<cmd>cd ~/.config/dotfiles_nix | Yazi<CR>"),
         dashboard.button("l", "Lazy plugins", "<cmd>Lazy<CR>"),
         dashboard.button("h", "Healthcheck", "<cmd>checkhealth<CR>"),
         dashboard.button("q", "Quit", "<cmd>qa<CR>"),
