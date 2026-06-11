@@ -335,6 +335,8 @@ RISCVEOF
     ];
     extraConfig = ''
       ##### QUALITY OF LIFE #####
+      set -g set-clipboard on
+      set -g allow-passthrough on
       set -g renumber-windows on
       setw -g pane-base-index 1
 
