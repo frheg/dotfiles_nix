@@ -448,6 +448,9 @@ RISCVEOF
   # UI: lualine statusline and which-key keybinding discovery.
   home.file.".config/nvim/lua/plugins/ui.lua".source = ../config/nvim/lua/plugins/ui.lua;
 
+  # Dashboard: custom Neovim start screen with shortcuts and plugin stats.
+  home.file.".config/nvim/lua/plugins/dashboard.lua".source = ../config/nvim/lua/plugins/dashboard.lua; 
+
   # Fuzzy finding: Telescope file search, live grep, buffer list, and help search.
   home.file.".config/nvim/lua/plugins/telescope.lua".source = ../config/nvim/lua/plugins/telescope.lua;
 
@@ -477,8 +480,8 @@ RISCVEOF
 
   # Text objects: Treesitter-aware function/class selections and movement.
   home.file.".config/nvim/lua/plugins/treesitter-textobjects.lua".source = ../config/nvim/lua/plugins/treesitter-textobjects.lua;
-  
-  # ── NEOVIM ───────────────────────────────────────────────────────────────
+ 
+   # ── NEOVIM ───────────────────────────────────────────────────────────────
   # Bare functional config — full setup to follow separately.
   programs.neovim = {
     withRuby = true;

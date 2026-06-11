@@ -1,0 +1,54 @@
+return {
+  {
+    "goolord/alpha-nvim",
+
+    event = "VimEnter",
+
+    dependencies = {
+      "nvim-tree/nvim-web-devicons",
+    },
+
+    config = function()
+      local alpha = require("alpha")
+      local dashboard = require("alpha.themes.dashboard")
+
+      dashboard.section.header.val = {
+        "                                                     ",
+        " ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗ ",
+        " ████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║ ",
+        " ██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║ ",
+        " ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║ ",
+        " ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║ ",
+        " ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝ ",
+        "                                                     ",
+      }
+
+      dashboard.section.buttons.val = {
+        dashboard.button("f", "Find file", ":Telescope find_files<CR>"),
+        dashboard.button("g", "Live grep", ":Telescope live_grep<CR>"),
+        dashboard.button("e", "File explorer", ":Oil<CR>"),
+        dashboard.button("r", "Recent files", ":Telescope oldfiles<CR>"),
+        dashboard.button("c", "Edit Neovim config", ":e ~/.config/dotfiles_nix/config/nvim/init.lua<CR>"),
+        dashboard.button("d", "Open dotfiles", ":cd ~/.config/dotfiles_nix | Oil<CR>"),
+        dashboard.button("l", "Lazy plugins", ":Lazy<CR>"),
+        dashboard.button("h", "Healthcheck", ":checkhealth<CR>"),
+        dashboard.button("q", "Quit", ":qa<CR>"),
+      }
+
+      dashboard.section.footer.val = function()
+        local stats = require("lazy").stats()
+        return "Loaded "
+          .. stats.loaded
+          .. "/"
+          .. stats.count
+          .. " plugins in "
+          .. math.floor(stats.startuptime * 100) / 100
+          .. " ms"
+      end
+
+      dashboard.opts.opts.noautocmd = true
+
+      alpha.setup(dashboard.opts)
+    end,
+  },
+}
