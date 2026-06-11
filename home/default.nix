@@ -468,14 +468,11 @@ RISCVEOF
   # Formatting: conform.nvim maps filetypes to Nix-managed formatters.
   home.file.".config/nvim/lua/plugins/format.lua".source = ../config/nvim/lua/plugins/format.lua;
 
-  # Navigation: oil.nvim file explorer and flash.nvim fast jump motions.
+  # Navigation: yazi.nvim file explorer and flash.nvim fast jump motions.
   home.file.".config/nvim/lua/plugins/navigation.lua".source = ../config/nvim/lua/plugins/navigation.lua;
 
   # Editing helpers: Comment.nvim for toggling comments with gc/gcc.
   home.file.".config/nvim/lua/plugins/editing.lua".source = ../config/nvim/lua/plugins/editing.lua;
-
-  # Diagnostics UI: trouble.nvim for project/file diagnostic lists.
-  home.file.".config/nvim/lua/plugins/diagnostics.lua".source = ../config/nvim/lua/plugins/diagnostics.lua;
 
   # Completion: blink.cmp completion engine, snippets, ghost text, and LSP completion.
   home.file.".config/nvim/lua/plugins/blink.lua".source = ../config/nvim/lua/plugins/blink.lua;
