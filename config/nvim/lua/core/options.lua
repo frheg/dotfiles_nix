@@ -12,6 +12,21 @@ vim.opt.splitright     = true
 vim.opt.splitbelow     = true
 vim.opt.termguicolors  = true
 vim.opt.clipboard      = "unnamedplus"
+if vim.fn.executable("wl-copy") == 1 then
+  vim.g.clipboard = {
+    name = "wl-clipboard",
+    copy = {
+      ["+"] = "wl-copy",
+      ["*"] = "wl-copy",
+    },
+    paste = {
+      ["+"] = "wl-paste --no-newline",
+      ["*"] = "wl-paste --no-newline",
+    },
+    cache_enabled = 0,
+  }
+end
+
 vim.opt.undofile       = true
 
 vim.g.mapleader      = " "
