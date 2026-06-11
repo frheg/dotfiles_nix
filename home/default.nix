@@ -479,8 +479,11 @@ RISCVEOF
 
   # Text objects: Treesitter-aware function/class selections and movement.
   home.file.".config/nvim/lua/plugins/treesitter-textobjects.lua".source = ../config/nvim/lua/plugins/treesitter-textobjects.lua;
- 
-   # ── NEOVIM ───────────────────────────────────────────────────────────────
+  
+  # Bufferline: tmux-like list of open Neovim buffers at the top.
+  home.file.".config/nvim/lua/plugins/bufferline.lua".source = ../config/nvim/lua/plugins/bufferline.lua;
+   
+  # ── NEOVIM ───────────────────────────────────────────────────────────────
   # Bare functional config — full setup to follow separately.
   programs.neovim = {
     withRuby = true;
