@@ -15,6 +15,12 @@ vim.opt.undofile       = true
 vim.g.mapleader      = " "
 vim.g.maplocalleader = " "
 
+-- Lualine already shows mode, so do not duplicate "-- INSERT --" below it.
+vim.opt.showmode = false
+
+-- Hide command line when not actively used.
+vim.opt.cmdheight = 0
+
 vim.filetype.add({
   extension = {
     mdx = "markdown.mdx",
