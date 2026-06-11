@@ -65,17 +65,23 @@
     zig
 
     # ── Neovim language servers / formatters ──────────────────────────────
-    nil
-    nixfmt
-    lua-language-server
-    stylua
-    pyright
-    ruff
-    typescript-language-server
-    prettier
-    marksman
-    taplo
-    tree-sitter
+    # Nix manages external editor tools. Neovim plugins call these binaries.
+    nil                              # Nix language server
+    nixfmt                           # Nix formatter
+    lua-language-server              # Lua language server
+    stylua                           # Lua formatter
+    pyright                          # Python type-checking language server
+    ruff                             # Python linter/formatter
+    typescript-language-server       # TypeScript/JavaScript language server
+    prettier                         # JS/TS/JSON/Markdown formatter
+    marksman                         # Markdown language server
+    taplo                            # TOML language server
+    tree-sitter                      # Treesitter parser compiler
+    clang-tools                      # C/C++ language server: clangd
+    bash-language-server             # Bash language server
+    dockerfile-language-server # Dockerfile language server
+    vscode-langservers-extracted     # HTML/CSS/JSON/ESLint language servers
+    yaml-language-server             # YAML language server
 
     # ── Misc ──────────────────────────────────────────────────────────────
     tesseract         # OCR
@@ -83,6 +89,10 @@
     mc                # midnight commander
 
   ] ++ lib.optionals pkgs.stdenv.isLinux [
+    # ── Linux: clipboard integration for Neovim/tmux/terminal ──────────────
+    wl-clipboard                     # Wayland clipboard provider: wl-copy/wl-paste
+    xclip                            # X11 clipboard fallback
+    
     # ── Linux: fonts (on macOS these are in hosts/hades.nix fonts.packages)
     nerd-fonts.iosevka
     nerd-fonts.jetbrains-mono
@@ -422,25 +432,51 @@ RISCVEOF
     '';
   };
 
+  # ── NEOVIM CONFIG FILES ──────────────────────────────────────────────────
+  # Home Manager places these Lua files under ~/.config/nvim.
+  # programs.neovim.initLua below is the generated entry point that requires them.
+
+  # Core editor behavior: options, keymaps, and lazy.nvim bootstrap.
   home.file.".config/nvim/lua/core/options.lua".source = ../config/nvim/lua/core/options.lua;
   home.file.".config/nvim/lua/core/keymaps.lua".source = ../config/nvim/lua/core/keymaps.lua;
   home.file.".config/nvim/lua/core/lazy.lua".source = ../config/nvim/lua/core/lazy.lua;
 
+  # Theme: Catppuccin colorscheme, transparency, and visual base styling.
   home.file.".config/nvim/lua/plugins/colorscheme.lua".source = ../config/nvim/lua/plugins/colorscheme.lua;
+
+  # UI: lualine statusline and which-key keybinding discovery.
   home.file.".config/nvim/lua/plugins/ui.lua".source = ../config/nvim/lua/plugins/ui.lua;
+
+  # Fuzzy finding: Telescope file search, live grep, buffer list, and help search.
   home.file.".config/nvim/lua/plugins/telescope.lua".source = ../config/nvim/lua/plugins/telescope.lua;
+
+  # Syntax parsing/highlighting: Treesitter parsers and highlighting.
   home.file.".config/nvim/lua/plugins/treesitter.lua".source = ../config/nvim/lua/plugins/treesitter.lua;
+
+  # Git UI: gutter signs, blame, hunk preview/stage/reset, Fugitive, Diffview.
   home.file.".config/nvim/lua/plugins/git.lua".source = ../config/nvim/lua/plugins/git.lua;
+
+  # Language intelligence: native Neovim LSP setup using Nix-managed servers.
   home.file.".config/nvim/lua/plugins/lsp.lua".source = ../config/nvim/lua/plugins/lsp.lua;
+
+  # Formatting: conform.nvim maps filetypes to Nix-managed formatters.
   home.file.".config/nvim/lua/plugins/format.lua".source = ../config/nvim/lua/plugins/format.lua;
 
-
+  # Navigation: oil.nvim file explorer and flash.nvim fast jump motions.
   home.file.".config/nvim/lua/plugins/navigation.lua".source = ../config/nvim/lua/plugins/navigation.lua;
+
+  # Editing helpers: Comment.nvim for toggling comments with gc/gcc.
   home.file.".config/nvim/lua/plugins/editing.lua".source = ../config/nvim/lua/plugins/editing.lua;
+
+  # Diagnostics UI: trouble.nvim for project/file diagnostic lists.
   home.file.".config/nvim/lua/plugins/diagnostics.lua".source = ../config/nvim/lua/plugins/diagnostics.lua;
 
+  # Completion: blink.cmp completion engine, snippets, ghost text, and LSP completion.
   home.file.".config/nvim/lua/plugins/blink.lua".source = ../config/nvim/lua/plugins/blink.lua;
 
+  # Text objects: Treesitter-aware function/class selections and movement.
+  home.file.".config/nvim/lua/plugins/treesitter-textobjects.lua".source = ../config/nvim/lua/plugins/treesitter-textobjects.lua;
+  
   # ── NEOVIM ───────────────────────────────────────────────────────────────
   # Bare functional config — full setup to follow separately.
   programs.neovim = {

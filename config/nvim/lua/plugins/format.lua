@@ -2,6 +2,7 @@ return {
   {
     "stevearc/conform.nvim",
     event = { "BufWritePre" },
+
     keys = {
       {
         "<leader>lf",
@@ -11,6 +12,7 @@ return {
         desc = "Format buffer",
       },
     },
+
     config = function()
       require("conform").setup({
         formatters_by_ft = {
@@ -19,8 +21,14 @@ return {
           python = { "ruff_format" },
           javascript = { "prettier" },
           typescript = { "prettier" },
+          javascriptreact = { "prettier" },
+          typescriptreact = { "prettier" },
           json = { "prettier" },
+          yaml = { "prettier" },
           markdown = { "prettier" },
+          html = { "prettier" },
+          css = { "prettier" },
+          scss = { "prettier" },
         },
       })
     end,
