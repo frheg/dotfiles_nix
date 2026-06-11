@@ -72,18 +72,53 @@ return {
         dashboard.button("q", "Quit", "<cmd>qa<CR>"),
       }
 
-      dashboard.section.footer.val = function()
-        local stats = require("lazy").stats()
-        local startup = math.floor(stats.startuptime * 100) / 100
+      local stats = require("lazy").stats()
+      local startup = math.floor(stats.startuptime * 100) / 100
 
-        return {
-          "host    " .. hostname(),
-          "cwd     " .. cwd(),
-          "git     " .. git_branch() .. " [" .. git_state() .. "]",
-          "plugins " .. stats.loaded .. "/" .. stats.count .. " loaded in " .. startup .. " ms",
-          "time    " .. os.date("%Y-%m-%d %H:%M"),
-        }
-      end
+      local footer_host = {
+        type = "text",
+        val = "host    " .. hostname(),
+        opts = {
+          position = "center",
+          hl = "AlphaFooterHost",
+        },
+      }
+
+      local footer_cwd = {
+        type = "text",
+        val = "cwd     " .. cwd(),
+        opts = {
+          position = "center",
+          hl = "AlphaFooterCwd",
+        },
+      }
+
+      local footer_git = {
+        type = "text",
+        val = "git     " .. git_branch() .. " [" .. git_state() .. "]",
+        opts = {
+          position = "center",
+          hl = "AlphaFooterGit",
+        },
+      }
+
+      local footer_plugins = {
+        type = "text",
+        val = "plugins " .. stats.loaded .. "/" .. stats.count .. " loaded in " .. startup .. " ms",
+        opts = {
+          position = "center",
+          hl = "AlphaFooterPlugins",
+        },
+      }
+
+      local footer_time = {
+        type = "text",
+        val = "time    " .. os.date("%Y-%m-%d %H:%M"),
+        opts = {
+          position = "center",
+          hl = "AlphaFooterTime",
+        },
+      }
 
       -- Catppuccin/tmux-style dashboard colors.
       vim.api.nvim_set_hl(0, "AlphaHeader", { fg = "#89b4fa" })
@@ -100,17 +135,24 @@ return {
       dashboard.section.buttons.opts.hl = "AlphaButtons"
       dashboard.section.buttons.opts.hl_shortcut = "AlphaShortcut"
 
-      dashboard.section.footer.opts.hl = {
-        { "AlphaFooterHost", 0, -1 },
-        { "AlphaFooterCwd", 0, -1 },
-        { "AlphaFooterGit", 0, -1 },
-        { "AlphaFooterPlugins", 0, -1 },
-        { "AlphaFooterTime", 0, -1 },
+      local opts = dashboard.opts
+
+      opts.layout = {
+        { type = "padding", val = 2 },
+        dashboard.section.header,
+        { type = "padding", val = 2 },
+        dashboard.section.buttons,
+        { type = "padding", val = 1 },
+        footer_host,
+        footer_cwd,
+        footer_git,
+        footer_plugins,
+        footer_time,
       }
 
-      dashboard.opts.opts.noautocmd = true
+      opts.opts.noautocmd = true
 
-      alpha.setup(dashboard.opts)
+      alpha.setup(opts)
     end,
   },
 }
