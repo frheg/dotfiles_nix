@@ -1,6 +1,7 @@
 return {
   {
     "stevearc/oil.nvim",
+    cmd = "Oil",
     keys = {
       { "<leader>e", "<cmd>Oil<CR>", desc = "Open file explorer" },
     },
@@ -17,7 +18,6 @@ return {
       },
     },
   },
-
   {
     "folke/flash.nvim",
     event = "VeryLazy",
