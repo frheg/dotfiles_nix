@@ -1,6 +1,6 @@
 FLAKE := $(shell pwd)
 
-.PHONY: darwin linux hades kratos sync-darwin sync-linux sync-hades sync-kratos update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync docs
+.PHONY: darwin linux hades kratos sync-darwin sync-linux sync-hades sync-kratos update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync docs status
 
 # ─────────────────────────────────────────────────────────────
 # System rebuilds
@@ -54,6 +54,43 @@ push:
 	fi
 	git push
 
+status:
+	@echo ""
+	@echo "── System ───────────────────────────────────"
+	@echo "Host: $$(hostname)"
+	@echo "OS:   $$(uname -s)"
+	@echo "User: $$(whoami)"
+	@echo ""
+	@echo "── Git ──────────────────────────────────────"
+	@git status -sb
+	@echo ""
+	@echo "── Current revision ─────────────────────────"
+	@git rev-parse --short HEAD
+	@echo ""
+	@echo "── Flake metadata ───────────────────────────"
+	@nix flake metadata --json | jq -r '.revision // "dirty or local"'
+	@echo ""
+	@echo "── Generations ──────────────────────────────"
+	@if [[ "$$(uname)" == "Darwin" ]]; then \
+		darwin-rebuild --list-generations | tail -n 5; \
+	else \
+		home-manager generations | tail -n 5; \
+	fi
+	@echo ""
+	@echo "── Neovim health ────────────────────────────"
+	@nvim --headless '+checkhealth vim.lsp' '+checkhealth vim.treesitter' +qa >/dev/null \
+		&& echo "Neovim health: OK" \
+		|| echo "Neovim health: FAILED"
+	@echo ""
+	@echo "── Lazy plugin state ───────────────────────"
+	@nvim --headless "+Lazy! check" +qa
+	@echo ""
+	@echo "── Nix store ───────────────────────────────"
+	@du -sh /nix/store 2>/dev/null || true
+	@echo ""
+	@echo "── Garbage collection preview ──────────────"
+	@nix store gc --dry-run 2>/dev/null | tail -n 10 || true
+
 # ─────────────────────────────────────────────────────────────
 # Neovim
 # ─────────────────────────────────────────────────────────────
@@ -76,11 +113,9 @@ check:
 	@echo ""
 	@echo "── Git ───────────────────────────────────────"
 	git status
-
 	@echo ""
 	@echo "── Flake outputs ─────────────────────────────"
 	@nix flake show
-
 	@echo ""
 	@echo "── Neovim health ─────────────────────────────"
 	@nvim --headless "+checkhealth" +qa || true
@@ -90,24 +125,19 @@ doctor:
 	@echo "── Versions ──────────────────────────────────"
 	@echo "Nix:"
 	@nix --version
-
 	@echo ""
 	@echo "Home Manager:"
 	@home-manager --version || true
-
 	@echo ""
 	@echo "Git:"
 	@git --version
-
 	@echo ""
 	@echo "Neovim:"
 	@nvim --version | head -10
-
 	@echo ""
 	@echo "── Paths ─────────────────────────────────────"
 	@echo "Nvim config:"
 	@echo $$HOME/.config/nvim
-
 	@echo ""
 	@echo "Nvim data:"
 	@echo $$HOME/.local/share/nvim
@@ -208,3 +238,6 @@ help:
 	@echo ""
 	@echo "Documentation:"
 	@echo "  make docs          List repository documentation"
+	@echo ""
+	@echo "Status / diagnostics:"
+	@echo "  make status        Full repository + system state overview"
