@@ -68,7 +68,7 @@ return {
           type = "text",
           val = line,
           opts = {
-            position = "center",
+            position = "left",
             hl = {
               { label_hl, 0, 8 },
               { "AlphaFooterPipe", 9, 10 },
