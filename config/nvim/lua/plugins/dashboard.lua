@@ -74,27 +74,39 @@ return {
 
       dashboard.section.footer.val = function()
         local stats = require("lazy").stats()
+        local startup = math.floor(stats.startuptime * 100) / 100
 
         return {
-          "host    |" .. hostname(),
-          "cwd     |" .. cwd(),
-          "git     |" .. git_branch() .. " [" .. git_state() .. "]",
-          "plugins |" .. stats.loaded .. "/" .. stats.count
-            .. " loaded in " .. math.floor(stats.startuptime * 100) / 100 .. " ms",
-          "time    |" .. os.date("%Y-%m-%d %H:%M"),
+          "host    " .. hostname(),
+          "cwd     " .. cwd(),
+          "git     " .. git_branch() .. " [" .. git_state() .. "]",
+          "plugins " .. stats.loaded .. "/" .. stats.count .. " loaded in " .. startup .. " ms",
+          "time    " .. os.date("%Y-%m-%d %H:%M"),
         }
       end
 
-      -- Catppuccin-style dashboard colors.
+      -- Catppuccin/tmux-style dashboard colors.
       vim.api.nvim_set_hl(0, "AlphaHeader", { fg = "#89b4fa" })
       vim.api.nvim_set_hl(0, "AlphaButtons", { fg = "#cdd6f4" })
       vim.api.nvim_set_hl(0, "AlphaShortcut", { fg = "#cba6f7", bold = true })
-      vim.api.nvim_set_hl(0, "AlphaFooter", { fg = "#f38ba8" })
+
+      vim.api.nvim_set_hl(0, "AlphaFooterHost", { fg = "#89b4fa" })
+      vim.api.nvim_set_hl(0, "AlphaFooterCwd", { fg = "#94e2d5" })
+      vim.api.nvim_set_hl(0, "AlphaFooterGit", { fg = "#b4befe" })
+      vim.api.nvim_set_hl(0, "AlphaFooterPlugins", { fg = "#f5c2e7" })
+      vim.api.nvim_set_hl(0, "AlphaFooterTime", { fg = "#fab387" })
 
       dashboard.section.header.opts.hl = "AlphaHeader"
       dashboard.section.buttons.opts.hl = "AlphaButtons"
       dashboard.section.buttons.opts.hl_shortcut = "AlphaShortcut"
-      dashboard.section.footer.opts.hl = "AlphaFooter"
+
+      dashboard.section.footer.opts.hl = {
+        { "AlphaFooterHost", 0, -1 },
+        { "AlphaFooterCwd", 0, -1 },
+        { "AlphaFooterGit", 0, -1 },
+        { "AlphaFooterPlugins", 0, -1 },
+        { "AlphaFooterTime", 0, -1 },
+      }
 
       dashboard.opts.opts.noautocmd = true
 
