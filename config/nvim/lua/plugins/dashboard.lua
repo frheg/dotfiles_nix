@@ -62,13 +62,15 @@ return {
       end
 
       local function footer_line(label, value, label_hl, value_hl)
-        local line = string.format("%-8s │ %s", label, value)
+        local content = string.format("%-8s │ %s", label, value)
+        local width = 46
+        local line = content .. string.rep(" ", math.max(0, width - #content))
 
         return {
           type = "text",
           val = line,
           opts = {
-            position = "left",
+            position = "center",
             hl = {
               { label_hl, 0, 8 },
               { "AlphaFooterPipe", 9, 10 },
