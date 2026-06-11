@@ -11,8 +11,38 @@ vim.opt.smartcase      = true
 vim.opt.splitright     = true
 vim.opt.splitbelow     = true
 vim.opt.termguicolors  = true
-vim.opt.clipboard      = "unnamedplus"
-if vim.fn.executable("wl-copy") == 1 then
+vim.opt.undofile       = true
+vim.g.mapleader      = " "
+vim.g.maplocalleader = " "
+
+vim.filetype.add({
+  extension = {
+    mdx = "markdown.mdx",
+  },
+})
+
+-- Clipboard:
+-- - local graphical sessions use system clipboard providers
+-- - SSH/tmux sessions use OSC52, which copies through the terminal
+vim.opt.clipboard = "unnamedplus"
+
+if vim.env.SSH_TTY ~= nil then
+  vim.g.clipboard = {
+    name = "OSC52",
+    copy = {
+      ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+      ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+    },
+    paste = {
+      ["+"] = function()
+        return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") }
+      end,
+      ["*"] = function()
+        return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") }
+      end,
+    },
+  }
+elseif vim.fn.executable("wl-copy") == 1 then
   vim.g.clipboard = {
     name = "wl-clipboard",
     copy = {
@@ -26,15 +56,3 @@ if vim.fn.executable("wl-copy") == 1 then
     cache_enabled = 0,
   }
 end
-
-vim.opt.undofile       = true
-
-vim.g.mapleader      = " "
-vim.g.maplocalleader = " "
-
-vim.filetype.add({
-  extension = {
-    mdx = "markdown.mdx",
-  },
-})
-
