@@ -206,7 +206,7 @@ RISCVEOF
       grep  = "grep --color=auto";
       c     = "clear";
       ex    = "exit";
-      cdnix = "cd ~/.config/dotfiles_nix/"
+      cdnix = "cd ~/.config/dotfiles_nix/";
 
       # ── eza (ls replacement) ──────────────────────────────────────────────
       la = "eza -ha";
