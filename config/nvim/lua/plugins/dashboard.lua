@@ -76,12 +76,12 @@ return {
         local stats = require("lazy").stats()
 
         return {
-          "host    " .. hostname(),
-          "cwd     " .. cwd(),
-          "git     " .. git_branch() .. " [" .. git_state() .. "]",
-          "plugins " .. stats.loaded .. "/" .. stats.count
+          "host    |" .. hostname(),
+          "cwd     |" .. cwd(),
+          "git     |" .. git_branch() .. " [" .. git_state() .. "]",
+          "plugins |" .. stats.loaded .. "/" .. stats.count
             .. " loaded in " .. math.floor(stats.startuptime * 100) / 100 .. " ms",
-          "time    " .. os.date("%Y-%m-%d %H:%M"),
+          "time    |" .. os.date("%Y-%m-%d %H:%M"),
         }
       end
 
@@ -89,7 +89,7 @@ return {
       vim.api.nvim_set_hl(0, "AlphaHeader", { fg = "#89b4fa" })
       vim.api.nvim_set_hl(0, "AlphaButtons", { fg = "#cdd6f4" })
       vim.api.nvim_set_hl(0, "AlphaShortcut", { fg = "#cba6f7", bold = true })
-      vim.api.nvim_set_hl(0, "AlphaFooter", { fg = "#94e2d5" })
+      vim.api.nvim_set_hl(0, "AlphaFooter", { fg = "#f38ba8" })
 
       dashboard.section.header.opts.hl = "AlphaHeader"
       dashboard.section.buttons.opts.hl = "AlphaButtons"
