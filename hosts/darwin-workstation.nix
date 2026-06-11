@@ -1,9 +1,5 @@
 { pkgs, lib, ... }: {
 
-  networking.hostName      = "Hades";
-  networking.localHostName = "Hades";
-
-
   # Required by current nix-darwin for user-scoped options
 
   system.primaryUser = "v1s";
