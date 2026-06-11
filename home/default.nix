@@ -55,6 +55,7 @@
     # conda manages ML envs separately at /opt/miniconda3
     uv                # fast Python package/project manager
     pipx              # isolated CLI tool installer
+    python3Packages.jupyterlab  # browser-based Python notebook/lab environment
 
     # ── JVM ───────────────────────────────────────────────────────────────
     # SDKMAN manages per-project Java versions; jdk21 is the global default
