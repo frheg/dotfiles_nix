@@ -1,0 +1,9 @@
+# Perfect Trackpad/Mouse Sensitivity (1 pixel per tick)
+set scroll-step 1
+set scroll-hstep 1
+
+# Perfect Keyboard Speed (Bypasses trackpad limits using Mac-safe native jumps)
+map j scroll half-down
+map k scroll half-up
+map l scroll half-right
+map h scroll half-left

@@ -29,11 +29,17 @@
 
   let
 
-    user = "v1s";
-
-    darwinWorkstation = nix-darwin.lib.darwinSystem {
+    # ── Machine builders ──────────────────────────────────────────────────
+    # `user` is the only required, machine-specific value — the macOS/Linux
+    # account name on that particular machine (it can differ per machine).
+    # `hostName` is optional: leave it unset to keep whatever Computer
+    # Name / hostname the machine already has (e.g. what you gave it during
+    # macOS setup); pass a string to have Nix set it explicitly instead.
+    mkDarwinSystem = { user, hostName ? null }: nix-darwin.lib.darwinSystem {
 
       system = "aarch64-darwin";
+
+      specialArgs = { inherit user hostName; };
 
       modules = [
 
@@ -61,7 +67,7 @@
 
     };
 
-    linuxWorkstation = home-manager.lib.homeManagerConfiguration {
+    mkLinuxSystem = { user }: home-manager.lib.homeManagerConfiguration {
 
       pkgs = nixpkgs.legacyPackages."x86_64-linux";
 
@@ -73,15 +79,16 @@
 
   in {
 
-    darwinConfigurations."darwin-workstation" = darwinWorkstation;
+    # ── Darwin machines ────────────────────────────────────────────────────
+    # scripts/new-machine.sh inserts new entries directly above the marker.
+    darwinConfigurations."darwin-workstation" = mkDarwinSystem { user = "v1s"; };
+    # NEW_DARWIN_MACHINE_MARKER
 
-    darwinConfigurations."Hades" = darwinWorkstation;
-
-    homeConfigurations."linux-workstation" = linuxWorkstation;
-
-    homeConfigurations."${user}@kratos" = linuxWorkstation;
+    # ── Linux machines ─────────────────────────────────────────────────────
+    # scripts/new-machine.sh inserts new entries directly above the marker.
+    homeConfigurations."linux-workstation" = mkLinuxSystem { user = "v1s"; };
+    # NEW_LINUX_MACHINE_MARKER
 
   };
 
 }
-

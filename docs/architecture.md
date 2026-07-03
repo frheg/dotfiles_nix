@@ -36,7 +36,11 @@ dotfiles_nix/
 
 # flake.nix
 
-Defines all available configurations.
+Defines all available configurations via two builder functions,
+`mkDarwinSystem` and `mkLinuxSystem`. Each known machine is a single
+registry entry passing in its `user` (and, for Darwin, an optional
+`hostName`) — no username or machine name is hardcoded anywhere else in the
+repo. See `docs/adding-machines.md` for how to register a new machine.
 
 Typical structure:
 

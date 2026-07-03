@@ -59,4 +59,9 @@
   # TODO: run `find ~ -name "aerospace.toml" 2>/dev/null` to locate your config,
   # then copy it to config/aerospace.toml in this repo and uncomment the line below.
   home.file.".config/aerospace/aerospace.toml".source = ../config/aerospace.toml;
+
+  # ── Zathura ───────────────────────────────────────────────────────────────
+  # zathura itself is installed via Homebrew (hosts/darwin-workstation.nix),
+  # not Nix, but its config is still declarative here.
+  home.file.".config/zathura/zathurarc".source = ../config/zathura/zathurarc;
 }

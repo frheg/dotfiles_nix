@@ -164,8 +164,11 @@ cd ~/.config/dotfiles_nix
 
 ./scripts/bootstrap-linux.sh
 
-home-manager switch --flake .#v1s@linux-workstation
+home-manager switch --flake .#linux-workstation
 ```
+
+If your account name on this machine isn't `v1s`, add a new entry to `flake.nix`
+first (see `docs/adding-machines.md`), then switch to that instead.
 
 ---
 

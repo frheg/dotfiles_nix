@@ -1,15 +1,25 @@
 FLAKE := $(shell pwd)
 
-.PHONY: darwin linux hades kratos sync-darwin sync-linux sync-hades sync-kratos update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync docs status
+# Which flake attribute this machine builds. Defaults match the two
+# machines registered in flake.nix today. If you register a machine under a
+# different name (see docs/adding-machines.md), override it locally in
+# config/local/machine.mk (gitignored — never committed) with e.g.:
+#   DARWIN_TARGET := darwin-laptop
+DARWIN_TARGET ?= darwin-workstation
+LINUX_TARGET  ?= linux-workstation
+
+-include config/local/machine.mk
+
+.PHONY: darwin linux hades kratos sync-darwin sync-linux sync-hades sync-kratos update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync yazi-sync new-machine docs status
 
 # ─────────────────────────────────────────────────────────────
 # System rebuilds
 # ─────────────────────────────────────────────────────────────
 darwin:
-	sudo -H nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake $(FLAKE)\#darwin-workstation
+	sudo -H nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake $(FLAKE)\#$(DARWIN_TARGET)
 
 linux:
-	nix run home-manager -- switch --flake $(FLAKE)\#linux-workstation
+	nix run home-manager -- switch --flake $(FLAKE)\#$(LINUX_TARGET)
 
 hades: darwin
 kratos: linux
@@ -105,6 +115,18 @@ nvim-reset:
 	rm -rf ~/.local/state/nvim
 	rm -rf ~/.cache/nvim
 	nvim
+
+# ─────────────────────────────────────────────────────────────
+# Yazi
+# ─────────────────────────────────────────────────────────────
+yazi-sync:
+	ya pkg install
+
+# ─────────────────────────────────────────────────────────────
+# New machine
+# ─────────────────────────────────────────────────────────────
+new-machine:
+	./scripts/new-machine.sh
 
 # ─────────────────────────────────────────────────────────────
 # Diagnostics
@@ -212,6 +234,12 @@ help:
 	@echo "  make nvim-sync     Run Lazy sync headlessly"
 	@echo "  make nvim-clean    Run Lazy clean headlessly"
 	@echo "  make nvim-reset    Delete Neovim cache/state/data and reopen Neovim"
+	@echo ""
+	@echo "Yazi maintenance:"
+	@echo "  make yazi-sync     Fetch yazi flavors/plugins declared in package.toml"
+	@echo ""
+	@echo "New machine:"
+	@echo "  make new-machine   Interactive wizard to register a new machine in flake.nix"
 	@echo ""
 	@echo "Diagnostics:"
 	@echo "  make check         Show Git status, flake outputs, and Neovim health"

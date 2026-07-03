@@ -1,0 +1,3 @@
+[mgr]
+linemode = "size"  # Or "size", "permissions", "owner"
+ratio    = [1, 2, 5]  # [parent, current, preview] — bigger preview pane

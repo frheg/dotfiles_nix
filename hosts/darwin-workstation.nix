@@ -1,14 +1,24 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, user, hostName ? null, ... }: {
 
   # Required by current nix-darwin for user-scoped options
 
-  system.primaryUser = "v1s";
+  system.primaryUser = user;
 
   # ── User (required so home-manager can derive homeDirectory) ──────────────
-  users.users.v1s = {
-    name  = "v1s";
-    home  = "/Users/v1s";
+  users.users.${user} = {
+    name  = user;
+    home  = "/Users/${user}";
     shell = pkgs.zsh;
+  };
+
+  # ── Computer name ─────────────────────────────────────────────────────────
+  # Left unset by default, so the machine keeps whatever name it already has
+  # (System Settings > General > Sharing, set during macOS setup).
+  # Pass `hostName = "some-name";` to mkDarwinSystem in flake.nix to override.
+  networking = lib.mkIf (hostName != null) {
+    hostName      = hostName;
+    computerName  = hostName;
+    localHostName = hostName;
   };
 
   # ── Nix settings ──────────────────────────────────────────────────────────
@@ -83,6 +93,9 @@
       ProgramArguments = [ "${pkgs.sketchybar}/bin/sketchybar" ];
       RunAtLoad        = true;
       KeepAlive        = true;
+      # Plugin scripts (config/sketchybar/plugins/*.sh) call `sketchybar` by
+      # bare name to update items; launchd's default PATH doesn't include it.
+      EnvironmentVariables.PATH = "${pkgs.sketchybar}/bin:/usr/bin:/bin:/usr/sbin:/sbin";
       StandardOutPath  = "/tmp/sketchybar.out.log";
       StandardErrorPath = "/tmp/sketchybar.err.log";
     };

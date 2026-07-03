@@ -28,6 +28,7 @@
     lazygit
     typst
     tinymist          # typst LSP
+    claude-code       # Claude Code CLI
 
     # ── System monitoring ─────────────────────────────────────────────────
     btop
@@ -511,4 +512,11 @@ RISCVEOF
   home.file.".config/ghostty/themes/catppuccin-macchiato".source = ../config/ghostty/themes/catppuccin-macchiato;
 
   home.file.".config/ghostty/themes/catppuccin-latte".source = ../config/ghostty/themes/catppuccin-latte;
+
+  # ── YAZI CONFIG ──────────────────────────────────────────────────────────
+  # Flavors declared in package.toml are fetched by yazi itself, not vendored
+  # here — run `ya pkg install` (or `make yazi-sync`) once after syncing.
+  home.file.".config/yazi/yazi.toml".source = ../config/yazi/yazi.toml;
+  home.file.".config/yazi/theme.toml".source = ../config/yazi/theme.toml;
+  home.file.".config/yazi/package.toml".source = ../config/yazi/package.toml;
 }
