@@ -93,9 +93,10 @@
       ProgramArguments = [ "${pkgs.sketchybar}/bin/sketchybar" ];
       RunAtLoad        = true;
       KeepAlive        = true;
-      # Plugin scripts (config/sketchybar/plugins/*.sh) call `sketchybar` by
-      # bare name to update items; launchd's default PATH doesn't include it.
-      EnvironmentVariables.PATH = "${pkgs.sketchybar}/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+      # sketchybarrc and its plugin scripts call `sketchybar` (Nix-managed)
+      # and `aerospace` (Homebrew cask) by bare name; launchd's default PATH
+      # includes neither.
+      EnvironmentVariables.PATH = "${pkgs.sketchybar}/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin";
       StandardOutPath  = "/tmp/sketchybar.out.log";
       StandardErrorPath = "/tmp/sketchybar.err.log";
     };
