@@ -40,7 +40,7 @@ for sid in "${WORKSPACES[@]}"; do
              background.corner_radius=5 \
              background.height=25 \
              script='
-               OCCUPIED=$(aerospace list-workspaces --all --empty no | awk "{print $1}")
+               OCCUPIED=$(aerospace list-workspaces --monitor all --empty no | awk "{print $1}")
                if [ "$FOCUSED_WORKSPACE" = "'$sid'" ]; then
                  sketchybar --set $NAME drawing=on background.drawing=on
                elif echo "$OCCUPIED" | grep -q "^'$sid'$"; then

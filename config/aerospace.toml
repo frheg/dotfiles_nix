@@ -10,11 +10,16 @@ config-version = 2
 # after-startup-command = []
 
 #####
-# Add to the 'after-startup-command' list at the top
-after-startup-command = ['exec-and-forget sketchybar']
+# NOTE: sketchybar is NOT started here — it already autostarts via its own
+# nix-darwin launchd agent (RunAtLoad = true, see hosts/darwin-workstation.nix).
+# Starting it here too would race the launchd agent for the same daemon socket.
+#
+# AeroSpace itself runs with a bare launchd PATH (/usr/bin:/bin:/usr/sbin:/sbin),
+# so `sketchybar` must be called by its stable per-user profile path below
+# rather than by bare name — $(basename "$HOME") avoids hardcoding a username.
 
 # Add this near the top (outside of any [mode] sections)
-exec-on-workspace-change = ['/bin/bash', '-c', 'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE']
+exec-on-workspace-change = ['/bin/bash', '-c', '/etc/profiles/per-user/$(basename "$HOME")/bin/sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE']
 #####
 
 # Start AeroSpace at login
@@ -88,7 +93,7 @@ on-mode-changed = []
 # 'main' binding mode must be always presented
 # Fallback value (if you omit the key): mode.main.binding = {}
 [mode.main.binding]
-    alt-s = 'exec-and-forget sketchybar --bar hidden=toggle'
+    alt-s = 'exec-and-forget /etc/profiles/per-user/$(basename "$HOME")/bin/sketchybar --bar hidden=toggle'
     # All possible keys:
     # - Letters.        a, b, c, ..., z
     # - Numbers.        0, 1, 2, ..., 9
