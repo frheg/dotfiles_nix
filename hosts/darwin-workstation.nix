@@ -70,8 +70,9 @@
       "aldente"          # battery charge limiter
       "stats"            # menu bar system stats
       "syncthing-app"    # syncthing menu bar GUI (daemon is in home/default.nix)
+      "tailscale"        # menu bar app + CLI (was previously installed outside Nix)
       # Browsers
-      "librewolf"
+      "zen"              # Zen Browser
       # Dev tools
       "tint"             # Tailwind CSS colour picker
       "ngrok"
