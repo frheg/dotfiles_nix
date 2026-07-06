@@ -6,8 +6,8 @@
 
   # ── macOS-only packages ───────────────────────────────────────────────────
   home.packages = with pkgs; [
-    sketchybar   # status bar (binary; launch agent is in hosts/hades.nix)
-    # Note: opencode is in hosts/hades.nix homebrew.brews (not yet in nixpkgs)
+    sketchybar   # status bar (binary; launch agent is in hosts/darwin-workstation.nix)
+    # Note: opencode is in hosts/darwin-workstation.nix homebrew.brews (not yet in nixpkgs)
   ];
 
   # ── macOS zsh additions ───────────────────────────────────────────────────

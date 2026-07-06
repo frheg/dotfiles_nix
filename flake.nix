@@ -69,11 +69,52 @@
 
     mkLinuxSystem = { user }: home-manager.lib.homeManagerConfiguration {
 
-      pkgs = nixpkgs.legacyPackages."x86_64-linux";
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+        config.allowUnfree = true;
+      };
 
       extraSpecialArgs = { inherit user; };
 
       modules = [ ./home/default.nix ./home/linux.nix ];
+
+    };
+
+    # Full NixOS machines (system + Home Manager in one). `hardwareModule`
+    # points at the machine's generated hardware-configuration.nix (from
+    # `nixos-generate-config`) — required and genuinely per-machine, unlike
+    # `user`/`hostName` which just default sensibly.
+    mkNixosSystem = { user, hostName ? null, hardwareModule }: nixpkgs.lib.nixosSystem {
+
+      system = "x86_64-linux";
+
+      specialArgs = { inherit user hostName; };
+
+      modules = [
+
+        ./hosts/nixos-workstation.nix
+
+        hardwareModule
+
+        home-manager.nixosModules.home-manager
+
+        {
+
+          home-manager.useGlobalPkgs = true;
+
+          home-manager.useUserPackages = true;
+
+          home-manager.extraSpecialArgs = { inherit user; };
+
+          home-manager.users.${user} = {
+
+            imports = [ ./home/default.nix ./home/linux.nix ];
+
+          };
+
+        }
+
+      ];
 
     };
 
@@ -84,10 +125,16 @@
     darwinConfigurations."darwin-workstation" = mkDarwinSystem { user = "v1s"; };
     # NEW_DARWIN_MACHINE_MARKER
 
-    # ── Linux machines ─────────────────────────────────────────────────────
+    # ── Linux machines (standalone Home Manager, no NixOS) ─────────────────
     # scripts/new-machine.sh inserts new entries directly above the marker.
     homeConfigurations."linux-workstation" = mkLinuxSystem { user = "v1s"; };
     # NEW_LINUX_MACHINE_MARKER
+
+    # ── NixOS machines ──────────────────────────────────────────────────────
+    nixosConfigurations."nixos-workstation" = mkNixosSystem {
+      user = "v1s";
+      hardwareModule = ./hosts/nixos-workstation-hardware.nix;
+    };
 
   };
 

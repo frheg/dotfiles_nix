@@ -95,7 +95,7 @@
     wl-clipboard                     # Wayland clipboard provider: wl-copy/wl-paste
     xclip                            # X11 clipboard fallback
     
-    # ── Linux: fonts (on macOS these are in hosts/hades.nix fonts.packages)
+    # ── Linux: fonts (on macOS these are in hosts/darwin-workstation.nix fonts.packages)
     nerd-fonts.iosevka
     nerd-fonts.jetbrains-mono
     nerd-fonts.fira-code
@@ -257,13 +257,17 @@ RISCVEOF
 
 
   # ── GIT ──────────────────────────────────────────────────────────────────
+  # user.name/user.email are intentionally NOT declared here: this repo is
+  # shared across personal and work machines, and a hardcoded identity would
+  # force the same one onto both. Set identity manually per machine with
+  # `git config --global user.name/user.email` (or a per-directory
+  # `includeIf` in ~/.gitconfig if you want work vs personal to switch
+  # automatically) — Home Manager will not touch those two keys.
   programs.git = {
     enable = true;
     lfs.enable = true;
 
     settings = {
-      user.name = "frheg";
-      user.email = "fredric.hegland@gmail.com";
       init.defaultBranch = "main";
       pull.rebase = false;
       core.editor = "nvim";

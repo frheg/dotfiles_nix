@@ -3,7 +3,11 @@
   home.username = user;
   home.homeDirectory = "/home/${user}";
 
-  nixpkgs.config.allowUnfree = true;
+  # nixpkgs.config.allowUnfree is set where `pkgs` is constructed instead of
+  # here: this module is shared between standalone Home Manager (Kubuntu,
+  # see mkLinuxSystem in flake.nix) and full NixOS (see
+  # hosts/nixos-workstation.nix), and setting it here conflicts with
+  # `home-manager.useGlobalPkgs` on the NixOS side.
 
   # ── Linux-only packages ───────────────────────────────────────────────────
   # ghostty, discord, thunderbird, nerd-fonts are already in default.nix

@@ -112,13 +112,22 @@ Raw configuration files managed declaratively.
 
 Examples:
 
-- tmux
 - ghostty
 - aerospace
 - sketchybar
 - karabiner
+- zathura
+- yazi
+- nvim (`lua/` modules only)
+- tmux (helper scripts under `scripts/` only)
 
-These are symlinked into the home directory by Home Manager.
+These are symlinked into the home directory by Home Manager via `home.file`.
+
+Two exceptions worth knowing: `tmux.conf` and Neovim's `init.lua` are **not**
+raw files here — they're generated inline from the `programs.tmux` /
+`programs.neovim` blocks in `home/default.nix`. Editing anything under
+`config/tmux/tmux.conf` or `config/nvim/init.lua` would have no effect, which
+is why those files were removed rather than kept as stale duplicates.
 
 ---
 

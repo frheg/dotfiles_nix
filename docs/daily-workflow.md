@@ -113,16 +113,21 @@ make darwin
 
 # Editing tmux
 
+`tmux.conf` is generated from the `programs.tmux` block in `home/default.nix`
+(not a raw file in `config/` — only its helper scripts under
+`config/tmux/scripts/` are raw, symlinked files).
+
 Edit:
 
 ```text
-config/tmux/tmux.conf
+home/default.nix
 ```
 
-Reload:
+Apply, then reload:
 
 ```bash
-tmux source-file ~/.tmux.conf
+make darwin   # or: make linux
+tmux source-file ~/.config/tmux/tmux.conf
 ```
 
 ---

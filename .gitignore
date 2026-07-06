@@ -6,5 +6,5 @@ result-*
 # macOS
 .DS_Store
 
-# Local machine overrides (not tracked — put in ~/.config/zsh/local.zsh)
+# Local machine overrides (not tracked — e.g. config/local/machine.mk)
 config/local/

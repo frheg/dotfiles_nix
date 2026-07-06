@@ -10,7 +10,7 @@ LINUX_TARGET  ?= linux-workstation
 
 -include config/local/machine.mk
 
-.PHONY: darwin linux hades kratos sync-darwin sync-linux sync-hades sync-kratos update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync yazi-sync new-machine docs status
+.PHONY: darwin linux sync-darwin sync-linux update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync yazi-sync new-machine docs status
 
 # ─────────────────────────────────────────────────────────────
 # System rebuilds
@@ -20,9 +20,6 @@ darwin:
 
 linux:
 	nix run home-manager -- switch --flake $(FLAKE)\#$(LINUX_TARGET)
-
-hades: darwin
-kratos: linux
 
 rebuild:
 	@if [[ "$$(uname)" == "Darwin" ]]; then \
@@ -40,10 +37,6 @@ pull:
 sync-darwin: pull darwin
 
 sync-linux: pull linux
-
-sync-hades: sync-darwin
-
-sync-kratos: sync-linux
 
 # ─────────────────────────────────────────────────────────────
 # Updates
@@ -139,6 +132,9 @@ check:
 	@echo "── Flake outputs ─────────────────────────────"
 	@nix flake show
 	@echo ""
+	@echo "── Flake evaluation check ────────────────────"
+	@nix flake check --no-build
+	@echo ""
 	@echo "── Neovim health ─────────────────────────────"
 	@nvim --headless "+checkhealth" +qa || true
 
@@ -213,16 +209,12 @@ help:
 	@echo "System rebuilds:"
 	@echo "  make darwin        Apply macOS nix-darwin + Home Manager config"
 	@echo "  make linux         Apply Linux Home Manager config"
-	@echo "  make hades         Alias for make darwin"
-	@echo "  make kratos        Alias for make linux"
 	@echo "  make rebuild       Auto-detect OS and apply correct config"
 	@echo ""
 	@echo "Sync between machines:"
 	@echo "  make pull          Pull latest Git changes with rebase"
 	@echo "  make sync-darwin   Pull latest changes, then rebuild macOS"
 	@echo "  make sync-linux    Pull latest changes, then rebuild Linux"
-	@echo "  make sync-hades    Alias for make sync-darwin"
-	@echo "  make sync-kratos   Alias for make sync-linux"
 	@echo ""
 	@echo "Updates:"
 	@echo "  make update        Update flake.lock inputs"
@@ -242,7 +234,7 @@ help:
 	@echo "  make new-machine   Interactive wizard to register a new machine in flake.nix"
 	@echo ""
 	@echo "Diagnostics:"
-	@echo "  make check         Show Git status, flake outputs, and Neovim health"
+	@echo "  make check         Show Git status, flake outputs/eval check, and Neovim health"
 	@echo "  make doctor        Print key tool versions and important paths"
 	@echo ""
 	@echo "Typical flows:"
@@ -256,13 +248,6 @@ help:
 	@echo "  make gc-dry        Show what Nix garbage collection would remove"
 	@echo "  make gc            Run safe garbage collection without deleting generation history"
 	@echo "  make gc-delete-old Delete old generations and remove rollback history"
-	@echo ""
-	@echo "Rollback / cleanup:"
-	@echo "  make generations   List nix generations"
-	@echo "  make rollback      Roll back current generation"
-	@echo "  make gc-dry        Preview garbage collection"
-	@echo "  make gc            Safe garbage collection"
-	@echo "  make gc-delete-old Delete old generations"
 	@echo ""
 	@echo "Documentation:"
 	@echo "  make docs          List repository documentation"
