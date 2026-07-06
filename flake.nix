@@ -53,6 +53,11 @@
 
           home-manager.useUserPackages = true;
 
+          # If a real (unmanaged) file already exists where Home Manager wants
+          # to place a symlink, back it up as <file>.hm-backup instead of
+          # aborting activation. Lets a first switch adopt pre-existing dotfiles.
+          home-manager.backupFileExtension = "hm-backup";
+
           home-manager.extraSpecialArgs = { inherit user; };
 
           home-manager.users.${user} = {
@@ -122,12 +127,12 @@
 
     # ── Darwin machines ────────────────────────────────────────────────────
     # scripts/new-machine.sh inserts new entries directly above the marker.
-    darwinConfigurations."darwin-workstation" = mkDarwinSystem { user = "v1s"; };
+    darwinConfigurations."darwin-workstation" = mkDarwinSystem { user = "Fredric.Hegland"; };
     # NEW_DARWIN_MACHINE_MARKER
 
     # ── Linux machines (standalone Home Manager, no NixOS) ─────────────────
     # scripts/new-machine.sh inserts new entries directly above the marker.
-    homeConfigurations."linux-workstation" = mkLinuxSystem { user = "v1s"; };
+    homeConfigurations."linux-workstation" = mkLinuxSystem { user = "Fredric.Hegland"; };
     # NEW_LINUX_MACHINE_MARKER
 
     # ── NixOS machines ──────────────────────────────────────────────────────

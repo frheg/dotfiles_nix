@@ -67,13 +67,13 @@ sketchybar --add item clock right \
 # Names must match exactly — run: sketchybar --query default_menu_items
 STATS_ALIASES=(
   "Control Center,WiFi"
-  "Control Center,bobko.aerospace"
-  "Control Center,Battery"
-  "Control Center,Network_speed"
-  "Control Center,Sensors_sensors"
-  "Control Center,RAM"
-  "Control Center,GPU_mini"
-  "Control Center,CPU_mini"
+  "AeroSpace,Item-0"
+  "Stats,Battery"
+  "Stats,Network_speed"
+  "Stats,Sensors_sensors"
+  "Stats,RAM_memory"
+  "Stats,GPU_mini"
+  "Stats,CPU_mini"
 )
 for alias in "${STATS_ALIASES[@]}"; do
   sketchybar --add alias "$alias" right

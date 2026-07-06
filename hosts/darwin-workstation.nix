@@ -22,10 +22,18 @@
   };
 
   # ── Nix settings ──────────────────────────────────────────────────────────
-  nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
-    trusted-users         = [ "root" "@admin" ];
-  };
+  # This machine uses Determinate Nix (its own daemon at
+  # /usr/local/bin/determinate-nixd), which conflicts with nix-darwin's native
+  # Nix management. nix-darwin aborts activation unless we opt out here.
+  # See: https://github.com/nix-darwin/nix-darwin -> `nix.enable` option.
+  #
+  # With nix.enable = false, everything under the `nix.*` namespace is inert
+  # (nix-darwin no longer writes /etc/nix/nix.conf or manages the daemon).
+  # Nix settings now live where Determinate manages them:
+  #   - /etc/nix/nix.conf         (Determinate-owned; already enables
+  #                                 `nix-command flakes`)
+  #   - /etc/nix/nix.custom.conf  (user overrides, e.g. `trusted-users`)
+  nix.enable = false;
 
   nixpkgs.config.allowUnfree = true;
   # lib.mkDefault lets nix-darwin's own platform detection win if it sets this
@@ -51,12 +59,21 @@
       cleanup = "none";
     };
 
+    # zathura lives in a third-party tap (it's unsupported in homebrew/core on
+    # macOS). Declared here so a fresh machine taps it automatically instead of
+    # relying on a manual `brew tap`.
+    taps = [ "zegervdv/zathura" ];
+
+    # Fully-qualified formula names (tap/name). The same upstream repo is
+    # reachable under two tap aliases on this machine — zegervdv/zathura and
+    # homebrew-zathura/zathura (a Homebrew tap-migration artifact) — so a bare
+    # "zathura" is ambiguous and `brew bundle` aborts. Qualifying resolves it.
     brews = [
-      "zathura"
-      "zathura-pdf-mupdf"
-      "zathura-djvu"
-      "zathura-ps"
-      "zathura-cb"
+      "zegervdv/zathura/zathura"
+      "zegervdv/zathura/zathura-pdf-mupdf"
+      "zegervdv/zathura/zathura-djvu"
+      "zegervdv/zathura/zathura-ps"
+      "zegervdv/zathura/zathura-cb"
       # opencode not yet packaged in nixpkgs
       "opencode"
     ];
@@ -75,7 +92,6 @@
       "zen"              # Zen Browser
       # Dev tools
       "tint"             # Tailwind CSS colour picker
-      "ngrok"
       # Downloads / torrents
       "motrix"
       "qbittorrent"
