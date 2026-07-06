@@ -9,6 +9,19 @@
   # sets one — "nixos" if you don't override it via mkNixosSystem's hostName.
   networking.hostName = if hostName != null then hostName else "nixos";
   networking.networkmanager.enable = true;
+  # Explicit fallback DNS: DHCP-provided DNS wasn't resolving reliably on
+  # first install (raw-IP connectivity worked, hostname resolution didn't).
+  # These take effect regardless of what DHCP does or doesn't hand out.
+  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
+
+  # ── Keyboard: Norwegian, no dead keys ──────────────────────────────────────
+  # console.keyMap affects the TTY you're on right now; the xkb settings
+  # apply once/if a graphical session (X11/Wayland) is added later.
+  console.keyMap = "no";
+  services.xserver.xkb = {
+    layout = "no";
+    variant = "nodeadkeys";
+  };
 
   # ── User ───────────────────────────────────────────────────────────────────
   # initialPassword only matters for the very first local login before
