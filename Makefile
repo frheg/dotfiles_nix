@@ -7,10 +7,11 @@ FLAKE := $(shell pwd)
 #   DARWIN_TARGET := darwin-laptop
 DARWIN_TARGET ?= darwin-workstation
 LINUX_TARGET  ?= linux-workstation
+NIXOS_TARGET  ?= nixos-workstation
 
 -include config/local/machine.mk
 
-.PHONY: darwin linux sync-darwin sync-linux update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync yazi-sync new-machine docs status
+.PHONY: darwin linux nixos sync-darwin sync-linux sync-nixos update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync yazi-sync new-machine docs status
 
 # ─────────────────────────────────────────────────────────────
 # System rebuilds
@@ -21,9 +22,14 @@ darwin:
 linux:
 	nix run home-manager -- switch --flake $(FLAKE)\#$(LINUX_TARGET)
 
+nixos:
+	sudo nixos-rebuild switch --flake $(FLAKE)\#$(NIXOS_TARGET)
+
 rebuild:
 	@if [[ "$$(uname)" == "Darwin" ]]; then \
 		$(MAKE) darwin; \
+	elif [ -e /etc/NIXOS ]; then \
+		$(MAKE) nixos; \
 	else \
 		$(MAKE) linux; \
 	fi
@@ -37,6 +43,8 @@ pull:
 sync-darwin: pull darwin
 
 sync-linux: pull linux
+
+sync-nixos: pull nixos
 
 # ─────────────────────────────────────────────────────────────
 # Updates
@@ -76,6 +84,8 @@ status:
 	@echo "── Generations ──────────────────────────────"
 	@if [[ "$$(uname)" == "Darwin" ]]; then \
 		darwin-rebuild --list-generations | tail -n 5; \
+	elif [ -e /etc/NIXOS ]; then \
+		sudo nixos-rebuild --list-generations | tail -n 5; \
 	else \
 		home-manager generations | tail -n 5; \
 	fi
@@ -167,6 +177,9 @@ generations:
 	@if [[ "$$(uname)" == "Darwin" ]]; then \
 		echo "── nix-darwin generations ──"; \
 		darwin-rebuild --list-generations; \
+	elif [ -e /etc/NIXOS ]; then \
+		echo "── NixOS generations ──"; \
+		sudo nixos-rebuild --list-generations; \
 	else \
 		echo "── Home Manager generations ──"; \
 		home-manager generations; \
@@ -176,6 +189,9 @@ rollback:
 	@if [[ "$$(uname)" == "Darwin" ]]; then \
 		echo "Rolling back nix-darwin system generation..."; \
 		sudo darwin-rebuild --rollback; \
+	elif [ -e /etc/NIXOS ]; then \
+		echo "Rolling back NixOS system generation..."; \
+		sudo nixos-rebuild switch --rollback; \
 	else \
 		echo "Home Manager rollback is manual."; \
 		echo ""; \
@@ -208,13 +224,15 @@ help:
 	@echo ""
 	@echo "System rebuilds:"
 	@echo "  make darwin        Apply macOS nix-darwin + Home Manager config"
-	@echo "  make linux         Apply Linux Home Manager config"
+	@echo "  make linux         Apply Linux Home Manager config (standalone, non-NixOS)"
+	@echo "  make nixos         Apply full NixOS system + Home Manager config"
 	@echo "  make rebuild       Auto-detect OS and apply correct config"
 	@echo ""
 	@echo "Sync between machines:"
 	@echo "  make pull          Pull latest Git changes with rebase"
 	@echo "  make sync-darwin   Pull latest changes, then rebuild macOS"
 	@echo "  make sync-linux    Pull latest changes, then rebuild Linux"
+	@echo "  make sync-nixos    Pull latest changes, then rebuild NixOS"
 	@echo ""
 	@echo "Updates:"
 	@echo "  make update        Update flake.lock inputs"
