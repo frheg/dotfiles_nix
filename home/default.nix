@@ -527,6 +527,9 @@ RISCVEOF
 
   home.file.".config/ghostty/themes/catppuccin-latte".source = ../config/ghostty/themes/catppuccin-latte;
 
+  # ── BTOP CONFIG ──────────────────────────────────────────────────────────
+  home.file.".config/btop/themes/catppuccin_mocha.theme".source = ../config/btop/themes/catppuccin_mocha.theme;
+
   # ── YAZI CONFIG ──────────────────────────────────────────────────────────
   # Flavors declared in package.toml are fetched by yazi itself, not vendored
   # here — run `ya pkg install` (or `make yazi-sync`) once after syncing.
