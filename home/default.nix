@@ -45,6 +45,7 @@
     # ── Build tooling ─────────────────────────────────────────────────────
     cmake
     ninja
+    gnumake
 
     # ── Productivity ──────────────────────────────────────────────────────
     fastfetch
@@ -266,6 +267,9 @@ RISCVEOF
   programs.git = {
     enable = true;
     lfs.enable = true;
+
+    userName = "Fredric Hegland";
+    userEmail = "fredric.hegland@gmail.com";
 
     settings = {
       init.defaultBranch = "main";
