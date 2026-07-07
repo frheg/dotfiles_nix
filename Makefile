@@ -7,7 +7,7 @@ FLAKE := $(shell pwd)
 #   DARWIN_TARGET := darwin-laptop
 DARWIN_TARGET ?= darwin-workstation
 LINUX_TARGET  ?= linux-workstation
-NIXOS_TARGET  ?= nixos-workstation
+NIXOS_TARGET  ?= kratos
 
 -include config/local/machine.mk
 

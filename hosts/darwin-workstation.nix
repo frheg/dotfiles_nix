@@ -87,7 +87,7 @@
       "aldente"          # battery charge limiter
       "stats"            # menu bar system stats
       "syncthing-app"    # syncthing menu bar GUI (daemon is in home/default.nix)
-      "tailscale"        # menu bar app + CLI (was previously installed outside Nix)
+      "tailscale-app"     # menu bar app + CLI (was previously installed outside Nix; Homebrew renamed this cask from "tailscale")
       # Browsers
       "zen"              # Zen Browser
       # Dev tools

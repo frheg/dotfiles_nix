@@ -127,7 +127,13 @@
 
     # ── Darwin machines ────────────────────────────────────────────────────
     # scripts/new-machine.sh inserts new entries directly above the marker.
+    # "darwin-workstation" = work MacBook Pro (macOS account "Fredric.Hegland").
+    # "darwin-air" = personal MacBook Air (macOS account "v1s"). These two
+    # machines have different local usernames, so they need separate flake
+    # entries — do not merge them back into one, it caused primaryUser
+    # activation failures when either machine's commit clobbered the other's.
     darwinConfigurations."darwin-workstation" = mkDarwinSystem { user = "Fredric.Hegland"; };
+    darwinConfigurations."darwin-air" = mkDarwinSystem { user = "v1s"; };
     # NEW_DARWIN_MACHINE_MARKER
 
     # ── Linux machines (standalone Home Manager, no NixOS) ─────────────────
@@ -136,7 +142,10 @@
     # NEW_LINUX_MACHINE_MARKER
 
     # ── NixOS machines ──────────────────────────────────────────────────────
-    nixosConfigurations."nixos-workstation" = mkNixosSystem {
+    # "kratos" = the stationary NixOS machine. Dedicated attribute name (not
+    # a generic role name) since this hardware module is machine-specific and
+    # will never be reused by another box.
+    nixosConfigurations."kratos" = mkNixosSystem {
       user = "v1s";
       hardwareModule = ./hosts/nixos-workstation-hardware.nix;
     };

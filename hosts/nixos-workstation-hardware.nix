@@ -3,7 +3,7 @@
 {
   # ── PLACEHOLDER ─────────────────────────────────────────────────────────
   # This file only exists so `nix flake check` can evaluate the
-  # nixosConfigurations.nixos-workstation output before the machine is
+  # nixosConfigurations.kratos output before the machine is
   # actually installed.
   #
   # After partitioning, run on the target machine (from the NixOS installer):
