@@ -373,6 +373,13 @@ RISCVEOF
       ##### PANES: ZOOM #####
       bind z resize-pane -Z
 
+      ##### PANES: BORDERS #####
+      set -g pane-border-lines heavy
+      set -g pane-border-style "fg=#45475a"
+      set -g pane-active-border-style "fg=#b4befe,bold"
+      set -g window-style "bg=default"
+      set -g window-active-style "bg=#1e1e2e"
+
       ##### WINDOWS #####
       bind c new-window -c "#{pane_current_path}"
       bind x kill-window

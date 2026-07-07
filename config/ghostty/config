@@ -7,7 +7,7 @@ font-family-italic      = Iosevka NFM Italic
 font-family-bold-italic = Iosevka NFM Bold Italic
 
 alpha-blending          = linear-corrected
-background-opacity      = 0.95
+background-opacity      = 0.90
 mouse-hide-while-typing = true
 keybind                 = super+r=reload_config
 cursor-text             = 000000
