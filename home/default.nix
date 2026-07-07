@@ -268,10 +268,9 @@ RISCVEOF
     enable = true;
     lfs.enable = true;
 
-    userName = "Fredric Hegland";
-    userEmail = "fredric.hegland@gmail.com";
-
     settings = {
+      user.name = "Fredric Hegland";
+      user.email = "fredric.hegland@gmail.com";
       init.defaultBranch = "main";
       pull.rebase = false;
       core.editor = "nvim";
