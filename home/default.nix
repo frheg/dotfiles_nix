@@ -33,6 +33,10 @@
     # ── System monitoring ─────────────────────────────────────────────────
     btop
 
+    # ── Email ─────────────────────────────────────────────────────────────
+    aerc
+    w3m
+
     # ── Network ───────────────────────────────────────────────────────────
     wget
     nmap
@@ -526,6 +530,12 @@ RISCVEOF
   home.file.".config/ghostty/themes/catppuccin-macchiato".source = ../config/ghostty/themes/catppuccin-macchiato;
 
   home.file.".config/ghostty/themes/catppuccin-latte".source = ../config/ghostty/themes/catppuccin-latte;
+
+  # ── AERC CONFIG ──────────────────────────────────────────────────────────
+  # accounts.conf is NOT managed here — set it up manually per machine.
+  home.file.".config/aerc/aerc.conf".source = ../config/aerc/aerc.conf;
+  home.file.".config/aerc/binds.conf".source = ../config/aerc/binds.conf;
+  home.file.".config/aerc/signature".source = ../config/aerc/signature;
 
   # ── BTOP CONFIG ──────────────────────────────────────────────────────────
   home.file.".config/btop/themes/catppuccin_mocha.theme".source = ../config/btop/themes/catppuccin_mocha.theme;
