@@ -31,7 +31,6 @@ return {
         "kotlin",
         "zig",
         "xml",
-        "haskell",
         "asm",
       },
 

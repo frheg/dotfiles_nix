@@ -35,7 +35,6 @@ return {
         zls = {},
         lemminx = {},
         asm_lsp = {},
-        hls = {},
       }
 
       for name, opts in pairs(servers) do

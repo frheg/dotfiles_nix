@@ -16,7 +16,6 @@
     # ── Search & filter ───────────────────────────────────────────────────
     fzf
     ripgrep
-    skim              # sk — second fuzzy finder (used in pdf alias)
 
     # ── Text & data ───────────────────────────────────────────────────────
     bat               # better cat
@@ -96,13 +95,10 @@
     zls                              # Zig language server
     lemminx                          # XML language server
     asm-lsp                          # x86/RISC-V assembly language server
-    haskell-language-server          # Haskell language server
     shfmt                            # Bash formatter
 
     # ── Misc ──────────────────────────────────────────────────────────────
-    tesseract         # OCR
     sl                # important productivity tool 🚂
-    mc                # midnight commander
 
   ] ++ lib.optionals pkgs.stdenv.isLinux [
     # ── Linux: clipboard integration for Neovim/tmux/terminal ──────────────
@@ -111,8 +107,6 @@
     
     # ── Linux: fonts (on macOS these are in hosts/darwin-workstation.nix fonts.packages)
     nerd-fonts.iosevka
-    nerd-fonts.jetbrains-mono
-    nerd-fonts.fira-code
     newcomputermodern
 
     # ── Linux: GUI apps (comment out if you prefer to keep these as snaps)

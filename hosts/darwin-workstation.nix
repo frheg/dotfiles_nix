@@ -43,8 +43,6 @@
   # (Linux fonts are in home/default.nix via home.packages)
   fonts.packages = with pkgs; [
     nerd-fonts.iosevka
-    nerd-fonts.jetbrains-mono
-    nerd-fonts.fira-code
     newcomputermodern
   ];
 
