@@ -202,14 +202,29 @@ rollback:
 		echo "  /nix/store/<generation-path>/activate"; \
 	fi
 
+# On Darwin and NixOS, system generations live in a root-owned profile
+# (/nix/var/nix/profiles/system), so collecting them needs sudo. Standalone
+# Home Manager (Kubuntu etc.) only owns a user profile, so it doesn't.
 gc-dry:
-	nix store gc --dry-run
+	@if [[ "$$(uname)" == "Darwin" ]] || [ -e /etc/NIXOS ]; then \
+		sudo nix store gc --dry-run; \
+	else \
+		nix store gc --dry-run; \
+	fi
 
 gc:
-	nix-collect-garbage
+	@if [[ "$$(uname)" == "Darwin" ]] || [ -e /etc/NIXOS ]; then \
+		sudo nix-collect-garbage; \
+	else \
+		nix-collect-garbage; \
+	fi
 
 gc-delete-old:
-	nix-collect-garbage -d
+	@if [[ "$$(uname)" == "Darwin" ]] || [ -e /etc/NIXOS ]; then \
+		sudo nix-collect-garbage -d; \
+	else \
+		nix-collect-garbage -d; \
+	fi
 
 # ─────────────────────────────────────────────────────────────
 # Help
