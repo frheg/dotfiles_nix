@@ -552,4 +552,12 @@ RISCVEOF
   home.file.".config/yazi/yazi.toml".source = ../config/yazi/yazi.toml;
   home.file.".config/yazi/theme.toml".source = ../config/yazi/theme.toml;
   home.file.".config/yazi/package.toml".source = ../config/yazi/package.toml;
+
+  # ── WALLPAPER ────────────────────────────────────────────────────────────
+  # Just the shared image asset (via Git LFS, see .gitattributes) — actually
+  # setting it as the desktop background is done manually per machine/DE,
+  # since that mechanism differs (macOS System Settings, GNOME, a WM, etc.).
+  # To change the wallpaper later: replace this file and update the filename
+  # here if the format changes (e.g. to .png).
+  home.file."Pictures/wallpaper.jpg".source = ../config/wallpaper/haunted-house.jpg;
 }
