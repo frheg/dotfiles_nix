@@ -89,6 +89,15 @@
     dockerfile-language-server # Dockerfile language server
     vscode-langservers-extracted     # HTML/CSS/JSON/ESLint language servers
     yaml-language-server             # YAML language server
+    rust-analyzer                    # Rust language server
+    jdt-language-server              # Java language server (jdtls)
+    kotlin-language-server           # Kotlin language server
+    sqls                             # SQL language server
+    zls                              # Zig language server
+    lemminx                          # XML language server
+    asm-lsp                          # x86/RISC-V assembly language server
+    haskell-language-server          # Haskell language server
+    shfmt                            # Bash formatter
 
     # ── Misc ──────────────────────────────────────────────────────────────
     tesseract         # OCR
@@ -484,6 +493,9 @@ RISCVEOF
 
   # Language intelligence: native Neovim LSP setup using Nix-managed servers.
   home.file.".config/nvim/lua/plugins/lsp.lua".source = ../config/nvim/lua/plugins/lsp.lua;
+
+  # Peek definitions/references/implementations in a floating window.
+  home.file.".config/nvim/lua/plugins/glance.lua".source = ../config/nvim/lua/plugins/glance.lua;
 
   # Formatting: conform.nvim maps filetypes to Nix-managed formatters.
   home.file.".config/nvim/lua/plugins/format.lua".source = ../config/nvim/lua/plugins/format.lua;

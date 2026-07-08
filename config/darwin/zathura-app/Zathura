@@ -1,0 +1,12 @@
+#!/bin/sh
+# Minimal launcher wrapping the Homebrew-installed zathura binary so macOS
+# LaunchServices has a real .app bundle to register as a PDF handler.
+# Homebrew's prefix differs between Apple Silicon and Intel, so check both.
+for prefix in /opt/homebrew /usr/local; do
+  if [ -x "$prefix/bin/zathura" ]; then
+    exec "$prefix/bin/zathura" "$@"
+  fi
+done
+
+echo "zathura binary not found in /opt/homebrew/bin or /usr/local/bin" >&2
+exit 1

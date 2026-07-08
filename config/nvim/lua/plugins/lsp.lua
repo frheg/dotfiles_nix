@@ -28,6 +28,14 @@ return {
         cssls = {},
         jsonls = {},
         yamlls = {},
+        rust_analyzer = {},
+        jdtls = {},
+        kotlin_language_server = {},
+        sqls = {},
+        zls = {},
+        lemminx = {},
+        asm_lsp = {},
+        hls = {},
       }
 
       for name, opts in pairs(servers) do

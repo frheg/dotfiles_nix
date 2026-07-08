@@ -76,6 +76,8 @@
       "zegervdv/zathura/zathura-cb"
       # opencode not yet packaged in nixpkgs
       "opencode"
+      # sets zathura as default PDF handler (see home/darwin.nix)
+      "duti"
     ];
 
     casks = [

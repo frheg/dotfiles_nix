@@ -29,6 +29,11 @@ return {
           html = { "prettier" },
           css = { "prettier" },
           scss = { "prettier" },
+          sh = { "shfmt" },
+          bash = { "shfmt" },
+          c = { "clang_format" },
+          cpp = { "clang_format" },
+          toml = { "taplo" },
         },
       })
     end,

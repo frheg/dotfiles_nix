@@ -19,7 +19,22 @@
     # Uncomment to manage via Nix instead:
     # pkgsCross.riscv64-embedded.buildPackages.gcc
     # qemu
+
+    # PDF viewer used by yazi's opener (config/yazi/yazi.toml). Unlike macOS
+    # (Homebrew formula, needs a manual plugin symlink — see home/darwin.nix),
+    # nixpkgs' zathura bundles the mupdf backend at build time, so no extra
+    # setup is needed. On this machine there's no display server yet (CLI-only
+    # NixOS box), so it won't actually open anything until one exists — safe
+    # to have installed regardless, ready for when a desktop is added.
+    zathura
   ];
+
+  # Sets zathura as the default PDF handler for whenever a graphical session
+  # exists (X11/Wayland) to read it. No-op today on a display-server-less box.
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications."application/pdf" = [ "org.pwmt.zathura.desktop" ];
+  };
 
   # ── Linux zsh additions ───────────────────────────────────────────────────
   programs.zsh.initContent = ''

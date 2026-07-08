@@ -29,6 +29,10 @@ return {
         "rust",
         "java",
         "kotlin",
+        "zig",
+        "xml",
+        "haskell",
+        "asm",
       },
 
       highlight = {

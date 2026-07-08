@@ -1,3 +1,13 @@
 [mgr]
 linemode = "size"  # Or "size", "permissions", "owner"
 ratio    = [1, 2, 5]  # [parent, current, preview] — bigger preview pane
+
+[opener]
+pdf = [
+  { run = 'zathura "$@"', desc = "Open with zathura", orphan = true },
+]
+
+[open]
+prepend_rules = [
+  { mime = "application/pdf", use = "pdf" },
+]
