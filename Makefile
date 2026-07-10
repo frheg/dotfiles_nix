@@ -11,13 +11,20 @@ NIXOS_TARGET  ?= kratos
 
 -include config/local/machine.mk
 
-.PHONY: darwin linux nixos sync-darwin sync-linux sync-nixos update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync yazi-sync new-machine docs status
+.PHONY: darwin darwin-home linux nixos sync-darwin sync-linux sync-nixos update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync yazi-sync new-machine docs status
 
 # ─────────────────────────────────────────────────────────────
 # System rebuilds
 # ─────────────────────────────────────────────────────────────
 darwin:
 	sudo -H nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake $(FLAKE)\#$(DARWIN_TARGET)
+
+# Fast path for dotfiles-only changes (tmux, sketchybar, karabiner, shell,
+# etc.) — skips nix-darwin's system activation (Homebrew, launchd, system
+# defaults). Anything touching hosts/darwin-workstation.nix still needs
+# `make darwin`.
+darwin-home:
+	nix --extra-experimental-features "nix-command flakes" run home-manager -- switch --flake $(FLAKE)\#$(DARWIN_TARGET)-home
 
 linux:
 	nix run home-manager -- switch --flake $(FLAKE)\#$(LINUX_TARGET)

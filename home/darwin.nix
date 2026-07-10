@@ -7,6 +7,7 @@
   # ── macOS-only packages ───────────────────────────────────────────────────
   home.packages = with pkgs; [
     sketchybar   # status bar (binary; launch agent is in hosts/darwin-workstation.nix)
+    blueutil     # Bluetooth CLI, used by sketchybar's bluetooth plugin
     # Note: opencode is in hosts/darwin-workstation.nix homebrew.brews (not yet in nixpkgs)
   ];
 
@@ -36,6 +37,10 @@
   };
   home.file.".config/sketchybar/plugins/battery.sh" = {
     source     = ../config/sketchybar/plugins/battery.sh;
+    executable = true;
+  };
+  home.file.".config/sketchybar/plugins/bluetooth.sh" = {
+    source     = ../config/sketchybar/plugins/bluetooth.sh;
     executable = true;
   };
   home.file.".config/sketchybar/plugins/clock.sh" = {

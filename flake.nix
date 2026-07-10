@@ -85,6 +85,26 @@
 
     };
 
+    # Standalone Home Manager build for a Darwin machine — same home/*.nix
+    # modules as mkDarwinSystem, but skips nix-darwin's system activation
+    # entirely (Homebrew casks, launchd agents, system defaults, etc.).
+    # Use this for fast iteration on dotfiles-only changes (tmux, sketchybar,
+    # karabiner, shell config): `home-manager switch --flake .#<name>-home`.
+    # Anything that touches hosts/darwin-workstation.nix still needs a real
+    # `make darwin` to take effect.
+    mkDarwinHomeOnly = { user }: home-manager.lib.homeManagerConfiguration {
+
+      pkgs = import nixpkgs {
+        system = "aarch64-darwin";
+        config.allowUnfree = true;
+      };
+
+      extraSpecialArgs = { inherit user; };
+
+      modules = [ ./home/default.nix ./home/darwin.nix ];
+
+    };
+
     # Full NixOS machines (system + Home Manager in one). `hardwareModule`
     # points at the machine's generated hardware-configuration.nix (from
     # `nixos-generate-config`) — required and genuinely per-machine, unlike
@@ -140,6 +160,10 @@
     # scripts/new-machine.sh inserts new entries directly above the marker.
     homeConfigurations."linux-workstation" = mkLinuxSystem { user = "Fredric.Hegland"; };
     # NEW_LINUX_MACHINE_MARKER
+
+    # ── Darwin machines: standalone home-only builds (fast iteration) ──────
+    homeConfigurations."darwin-workstation-home" = mkDarwinHomeOnly { user = "Fredric.Hegland"; };
+    homeConfigurations."darwin-air-home" = mkDarwinHomeOnly { user = "v1s"; };
 
     # ── NixOS machines ──────────────────────────────────────────────────────
     # "kratos" = the stationary NixOS machine. Dedicated attribute name (not
