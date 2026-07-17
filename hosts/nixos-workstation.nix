@@ -77,6 +77,13 @@
     nvidiaSettings = true;
   };
 
+  # btop (and other tools) dlopen "libnvml.so.1" to read GPU metrics via NVML.
+  # NixOS ships that library as "libnvidia-ml.so.1" — create the expected symlink
+  # at boot so tools find it when /run/opengl-driver/lib is on their library path.
+  systemd.tmpfiles.rules = [
+    "L+ /run/opengl-driver/lib/libnvml.so.1 - - - - /run/opengl-driver/lib/libnvidia-ml.so.1"
+  ];
+
   # ── Remote compute: Tailscale + SSH ─────────────────────────────────────────
   # This machine's primary purpose — SSH in over Tailscale to use the GPU
   # remotely instead of owning a second, more expensive laptop.

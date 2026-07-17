@@ -30,7 +30,17 @@
     claude-code       # Claude Code CLI
 
     # ── System monitoring ─────────────────────────────────────────────────
-    btop
+    # Wrapped so /run/opengl-driver/lib (where libnvml.so.1 lives) is on the
+    # library path — required for GPU monitoring on NixOS with NVIDIA drivers.
+    (symlinkJoin {
+      name = "btop";
+      paths = [ btop ];
+      nativeBuildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/btop \
+          --prefix LD_LIBRARY_PATH : /run/opengl-driver/lib
+      '';
+    })
 
     # ── Email ─────────────────────────────────────────────────────────────
     aerc
