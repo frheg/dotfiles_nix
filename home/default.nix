@@ -203,6 +203,13 @@ RISC-V helpers
   rvgccrun <file.c> [out]  compile static + run
 RISCVEOF
       }
+
+      # ── SSH greeting (first shell only, not inside tmux panes) ────────────
+      if [[ -z "$TMUX" && -n "$SSH_CONNECTION" ]]; then
+        fastfetch
+        echo ""
+        git -C ~/.config/dotfiles_nix --no-pager status --short --branch
+      fi
     '';
 
     shellAliases = {
