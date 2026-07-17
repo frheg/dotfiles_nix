@@ -171,6 +171,7 @@
     # will never be reused by another box.
     nixosConfigurations."kratos" = mkNixosSystem {
       user = "v1s";
+      hostName = "kratos";
       hardwareModule = ./hosts/nixos-workstation-hardware.nix;
     };
 
