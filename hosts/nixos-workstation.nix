@@ -53,6 +53,14 @@
   };
   nixpkgs.config.allowUnfree = true; # required for NVIDIA driver/CUDA
 
+  # ── Firmware ─────────────────────────────────────────────────────────────
+  # The live installer ISO bundles full firmware, so wifi/bluetooth (Intel
+  # iwlwifi/ibt) work during install regardless of this setting — but a
+  # freshly installed system does NOT get it unless set explicitly, which is
+  # why wifi disappeared after the first real boot. Set here so it's never
+  # missed again on a reinstall.
+  hardware.enableRedistributableFirmware = true;
+
   # ── GPU: NVIDIA (RTX 5060 Ti / Blackwell) ──────────────────────────────────
   hardware.graphics = {
     enable = true;
