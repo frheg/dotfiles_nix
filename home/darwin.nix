@@ -9,6 +9,14 @@
     sketchybar   # status bar (binary; launch agent is in hosts/darwin-workstation.nix)
     blueutil     # Bluetooth CLI, used by sketchybar's bluetooth plugin
     # Note: opencode is in hosts/darwin-workstation.nix homebrew.brews (not yet in nixpkgs)
+
+    # Docker (no Docker Desktop on macOS): colima runs the Linux VM + daemon,
+    # docker-client provides the bare `docker` CLI, docker-compose adds
+    # `docker compose`. Aliases (d/dc/dcu/...) already live in home/default.nix.
+    # Not started automatically — run `colima start` when you need Docker.
+    colima
+    docker-client
+    docker-compose
   ];
 
   # ── macOS zsh additions ───────────────────────────────────────────────────
