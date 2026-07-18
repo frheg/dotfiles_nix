@@ -47,6 +47,7 @@
                     },
                     {
                         "description": "Space → Shift when held, Space when tapped",
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "from": {
