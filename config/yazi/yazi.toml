@@ -1,6 +1,6 @@
 [mgr]
 linemode = "size"  # Or "size", "permissions", "owner"
-ratio    = [1, 2, 5]  # [parent, current, preview] — bigger preview pane
+ratio    = [1, 1, 4]  # [parent, current, preview] — bigger preview pane
 
 [opener]
 pdf = [
