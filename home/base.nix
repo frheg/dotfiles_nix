@@ -57,7 +57,12 @@
     nmap
 
     # ── Media ─────────────────────────────────────────────────────────────
-    spotify-player
+    # spotify-player removed: fails to build on aarch64-darwin right now —
+    # nixpkgs-unstable's cctools-binutils-darwin linker crashes ("Trace/BPT
+    # trap: 5") linking its Rust dependency tree, and no cached binary
+    # exists for it either. Not a config issue — retry once nixpkgs moves
+    # past it, or `nix shell nixpkgs#spotify-player` occasionally to check
+    # (see docs/trying-packages.md).
 
     # ── Documents ─────────────────────────────────────────────────────────
 
