@@ -15,19 +15,28 @@ Examples:
 
 # Apply configuration
 
-## macOS
+## hades (macOS)
 
 ```bash
 cd ~/.config/dotfiles_nix
-make darwin
+make hades
 ```
 
-## Linux
+## kratos (NixOS)
 
 ```bash
 cd ~/.config/dotfiles_nix
-make linux
+make kratos
 ```
+
+## Anywhere else (base tier)
+
+```bash
+cd ~/.config/dotfiles_nix
+make base
+```
+
+Or without cloning first — see the Bootstrap section of the README.
 
 ---
 
@@ -51,37 +60,35 @@ make push
 
 ## Pull and apply
 
-### macOS
-
 ```bash
-make sync-darwin
-```
-
-### Linux
-
-```bash
-make sync-linux
+make sync-hades    # hades
+make sync-kratos   # kratos
+make sync-base     # anywhere else
 ```
 
 ---
 
 # Adding packages
 
-Shared package:
+## Shared across every machine
 
-Edit:
-
-```text
-home/default.nix
-```
-
-Add:
+Edit `home/base.nix`:
 
 ```nix
 home.packages = with pkgs; [
   tree
 ];
 ```
+
+## hades-only (macOS)
+
+Edit `home/hades.nix` (Nix-managed CLI packages) or `hosts/hades.nix`
+(Homebrew casks/formulas).
+
+## kratos-only (NixOS homelab)
+
+Edit `home/kratos.nix` (Nix-managed CLI packages) or `hosts/kratos.nix`
+(system-level services/packages).
 
 Apply configuration afterward.
 
@@ -92,7 +99,7 @@ Apply configuration afterward.
 Edit:
 
 ```text
-hosts/darwin-workstation.nix
+hosts/hades.nix
 ```
 
 Add:
@@ -106,27 +113,27 @@ homebrew.casks = [
 Apply:
 
 ```bash
-make darwin
+make hades
 ```
 
 ---
 
 # Editing tmux
 
-`tmux.conf` is generated from the `programs.tmux` block in `home/default.nix`
+`tmux.conf` is generated from the `programs.tmux` block in `home/base.nix`
 (not a raw file in `config/` — only its helper scripts under
 `config/tmux/scripts/` are raw, symlinked files).
 
 Edit:
 
 ```text
-home/default.nix
+home/base.nix
 ```
 
 Apply, then reload:
 
 ```bash
-make darwin   # or: make linux
+make hades   # or: make kratos / make base
 tmux source-file ~/.config/tmux/tmux.conf
 ```
 
@@ -149,7 +156,7 @@ Restart Ghostty afterward.
 Edit:
 
 ```text
-home/default.nix
+home/base.nix
 ```
 
 Apply configuration.
@@ -167,8 +174,8 @@ make update
 Then:
 
 ```bash
-make darwin
-make linux
+make hades
+make kratos
 ```
 
 Then commit the updated `flake.lock`.
@@ -186,8 +193,8 @@ git status
 ## Rebuild test
 
 ```bash
-make darwin
-make linux
+make hades
+make kratos
 ```
 
 ## Verify symlinks
@@ -218,4 +225,3 @@ macOS:
 ```bash
 darwin-rebuild --list-generations
 ```
-

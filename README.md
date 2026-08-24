@@ -8,10 +8,12 @@ Declarative multi-platform environment using:
 - Home Manager
 - nix-darwin
 
-Supported platforms:
+Three tiers:
 
-- macOS
-- Linux
+- **base** — cross-platform CLI foundation (shell, tmux, full neovim, core
+  tools). No fixed machine name — quick-install anywhere via a script.
+- **hades** — the macOS laptop. base + macOS extras.
+- **kratos** — the NixOS homelab desktop. base + homelab extras.
 
 ---
 
@@ -19,18 +21,25 @@ Supported platforms:
 
 ## Apply config
 
-### macOS
+### hades (macOS)
 
 ```bash
 cd ~/.config/dotfiles_nix
-make darwin
+make hades
 ```
 
-### Linux
+### kratos (NixOS)
 
 ```bash
 cd ~/.config/dotfiles_nix
-make linux
+make kratos
+```
+
+### Anywhere else (base tier)
+
+```bash
+cd ~/.config/dotfiles_nix
+make base
 ```
 
 ---
@@ -55,16 +64,10 @@ make push
 
 ## Pull and apply
 
-### macOS
-
 ```bash
-make sync-darwin
-```
-
-### Linux
-
-```bash
-make sync-linux
+make sync-hades    # hades
+make sync-kratos   # kratos
+make sync-base     # anywhere else
 ```
 
 ---
@@ -73,11 +76,14 @@ make sync-linux
 
 ## Add package
 
-Edit:
+Shared everywhere — edit:
 
 ```text
-home/default.nix
+home/base.nix
 ```
+
+hades-only or kratos-only — edit `home/hades.nix`/`hosts/hades.nix` or
+`home/kratos.nix`/`hosts/kratos.nix` respectively.
 
 Apply config afterward.
 
@@ -88,7 +94,7 @@ Apply config afterward.
 Edit:
 
 ```text
-hosts/darwin-workstation.nix
+hosts/hades.nix
 ```
 
 Add cask to:
@@ -100,27 +106,27 @@ homebrew.casks = [ ];
 Apply:
 
 ```bash
-make darwin
+make hades
 ```
 
 ---
 
 ## Edit tmux
 
-`tmux.conf` is generated from the `programs.tmux` block in `home/default.nix`
+`tmux.conf` is generated from the `programs.tmux` block in `home/base.nix`
 (not a raw file in `config/` — only its helper scripts under
 `config/tmux/scripts/` are raw, symlinked files).
 
 Edit:
 
 ```text
-home/default.nix
+home/base.nix
 ```
 
 Apply, then reload:
 
 ```bash
-make darwin   # or: make linux
+make hades   # or: make kratos / make base
 tmux source-file ~/.config/tmux/tmux.conf
 ```
 
@@ -150,30 +156,32 @@ Then rebuild systems and commit `flake.lock`.
 
 # Bootstrap
 
-## macOS
+## hades (macOS)
 
 ```bash
 git clone https://github.com/frheg/dotfiles_nix ~/.config/dotfiles_nix
 cd ~/.config/dotfiles_nix
 
-sudo nix run nix-darwin -- switch --flake .#darwin-workstation
+sudo nix run nix-darwin -- switch --flake .#hades
 ```
 
----
+## kratos (NixOS)
 
-## Linux
+```bash
+sudo nixos-rebuild switch --flake .#kratos
+```
+
+## Anywhere else (base tier)
 
 ```bash
 git clone https://github.com/frheg/dotfiles_nix ~/.config/dotfiles_nix
 cd ~/.config/dotfiles_nix
 
-./scripts/bootstrap-linux.sh
-
-home-manager switch --flake .#linux-workstation
+./scripts/bootstrap-base.sh
 ```
 
-If your account name on this machine isn't `v1s`, add a new entry to `flake.nix`
-first (see `docs/adding-machines.md`), then switch to that instead.
+No `flake.nix` entry required. See `docs/adding-machines.md` if you want
+this machine tracked as a permanent registry entry instead.
 
 ---
 
@@ -184,4 +192,4 @@ Additional documentation:
 - `docs/architecture.md`
 - `docs/daily-workflow.md`
 - `docs/adding-machines.md`
-
+- `docs/trying-packages.md`

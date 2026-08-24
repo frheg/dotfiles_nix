@@ -12,9 +12,8 @@
   };
 
   # ── Computer name ─────────────────────────────────────────────────────────
-  # Left unset by default, so the machine keeps whatever name it already has
-  # (System Settings > General > Sharing, set during macOS setup).
-  # Pass `hostName = "some-name";` to mkDarwinSystem in flake.nix to override.
+  # flake.nix passes hostName = "hades" — sets Computer Name / hostname
+  # explicitly rather than inheriting whatever macOS setup assigned.
   networking = lib.mkIf (hostName != null) {
     hostName      = hostName;
     computerName  = hostName;
@@ -40,7 +39,7 @@
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-darwin";
 
   # ── System-wide fonts ─────────────────────────────────────────────────────
-  # (Linux fonts are in home/default.nix via home.packages)
+  # (Linux fonts are in home/base.nix via home.packages)
   fonts.packages = with pkgs; [
     nerd-fonts.iosevka
     newcomputermodern
@@ -74,8 +73,10 @@
       "zegervdv/zathura/zathura-cb"
       # opencode not yet packaged in nixpkgs
       "opencode"
-      # sets zathura as default PDF handler (see home/darwin.nix)
+      # sets zathura as default PDF handler (see home/hades.nix)
       "duti"
+      # tw93/mole — macOS maintenance CLI (cleaning, uninstaller, disk analysis)
+      "mole"
     ];
 
     casks = [
@@ -86,7 +87,7 @@
       # System utilities
       "aldente"          # battery charge limiter
       "stats"            # menu bar system stats
-      "syncthing-app"    # syncthing menu bar GUI (daemon is in home/default.nix)
+      "syncthing-app"    # syncthing menu bar GUI (daemon is in home/base.nix)
       "tailscale-app"     # menu bar app + CLI (was previously installed outside Nix; Homebrew renamed this cask from "tailscale")
       # Browsers
       "zen"              # Zen Browser
@@ -103,7 +104,7 @@
   };
 
   # ── Sketchybar — user launch agent ────────────────────────────────────────
-  # Reads config from ~/.config/sketchybar/sketchybarrc (managed in home/darwin.nix)
+  # Reads config from ~/.config/sketchybar/sketchybarrc (managed in home/hades.nix)
   launchd.user.agents.sketchybar = {
     serviceConfig = {
       Label            = "com.felixkratz.sketchybar";

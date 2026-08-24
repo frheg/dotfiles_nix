@@ -1,7 +1,7 @@
 
 {
 
-  description = "v1s declarative dotfiles — shared macOS/Linux workstation setup";
+  description = "v1s declarative dotfiles — base/hades/kratos tiers";
 
   inputs = {
 
@@ -29,12 +29,17 @@
 
   let
 
-    # ── Machine builders ──────────────────────────────────────────────────
-    # `user` is the only required, machine-specific value — the macOS/Linux
-    # account name on that particular machine (it can differ per machine).
-    # `hostName` is optional: leave it unset to keep whatever Computer
-    # Name / hostname the machine already has (e.g. what you gave it during
-    # macOS setup); pass a string to have Nix set it explicitly instead.
+    # ── Tiers ────────────────────────────────────────────────────────────────
+    # base    — home/base.nix only: shell, tmux, full neovim, core CLI tools.
+    #           Cross-platform. Used standalone via scripts/bootstrap-base.sh
+    #           (no flake registry entry needed), or as the foundation every
+    #           named machine below imports and extends.
+    # hades   — the one macOS laptop. base + home/hades.nix + hosts/hades.nix.
+    # kratos  — the NixOS homelab desktop. base + home/kratos.nix + hosts/kratos.nix.
+
+    # Full nix-darwin system (hades). `user`/`hostName` stay as arguments
+    # rather than hardcoded inline so the same builder can register a future
+    # second Darwin machine without new plumbing — just another call below.
     mkDarwinSystem = { user, hostName ? null }: nix-darwin.lib.darwinSystem {
 
       system = "aarch64-darwin";
@@ -43,7 +48,7 @@
 
       modules = [
 
-        ./hosts/darwin-workstation.nix
+        ./hosts/hades.nix
 
         home-manager.darwinModules.home-manager
 
@@ -62,7 +67,7 @@
 
           home-manager.users.${user} = {
 
-            imports = [ ./home/default.nix ./home/darwin.nix ];
+            imports = [ ./home/base.nix ./home/hades.nix ];
 
           };
 
@@ -72,43 +77,8 @@
 
     };
 
-    mkLinuxSystem = { user }: home-manager.lib.homeManagerConfiguration {
-
-      pkgs = import nixpkgs {
-        system = "x86_64-linux";
-        config.allowUnfree = true;
-      };
-
-      extraSpecialArgs = { inherit user; };
-
-      modules = [ ./home/default.nix ./home/linux.nix ];
-
-    };
-
-    # Standalone Home Manager build for a Darwin machine — same home/*.nix
-    # modules as mkDarwinSystem, but skips nix-darwin's system activation
-    # entirely (Homebrew casks, launchd agents, system defaults, etc.).
-    # Use this for fast iteration on dotfiles-only changes (tmux, sketchybar,
-    # karabiner, shell config): `home-manager switch --flake .#<name>-home`.
-    # Anything that touches hosts/darwin-workstation.nix still needs a real
-    # `make darwin` to take effect.
-    mkDarwinHomeOnly = { user }: home-manager.lib.homeManagerConfiguration {
-
-      pkgs = import nixpkgs {
-        system = "aarch64-darwin";
-        config.allowUnfree = true;
-      };
-
-      extraSpecialArgs = { inherit user; };
-
-      modules = [ ./home/default.nix ./home/darwin.nix ];
-
-    };
-
-    # Full NixOS machines (system + Home Manager in one). `hardwareModule`
-    # points at the machine's generated hardware-configuration.nix (from
-    # `nixos-generate-config`) — required and genuinely per-machine, unlike
-    # `user`/`hostName` which just default sensibly.
+    # Full NixOS system (kratos). `hardwareModule` points at the machine's
+    # generated hardware-configuration.nix (from `nixos-generate-config`).
     mkNixosSystem = { user, hostName ? null, hardwareModule }: nixpkgs.lib.nixosSystem {
 
       system = "x86_64-linux";
@@ -117,7 +87,7 @@
 
       modules = [
 
-        ./hosts/nixos-workstation.nix
+        ./hosts/kratos.nix
 
         hardwareModule
 
@@ -133,7 +103,7 @@
 
           home-manager.users.${user} = {
 
-            imports = [ ./home/default.nix ./home/linux.nix ];
+            imports = [ ./home/base.nix ./home/kratos.nix ];
 
           };
 
@@ -143,36 +113,43 @@
 
     };
 
+    # Standalone Home Manager on just home/base.nix — no Homebrew, no NixOS
+    # modules, no role-specific extras. For a permanent-but-simple machine
+    # that doesn't (yet) warrant its own hades/kratos-style extras module.
+    # `system` is a full nixpkgs system string (e.g. "x86_64-linux",
+    # "aarch64-darwin", "aarch64-linux") so this works for any platform Home
+    # Manager supports standalone. scripts/new-machine.sh writes entries here.
+    mkBaseSystem = { user, system }: home-manager.lib.homeManagerConfiguration {
+
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
+
+      extraSpecialArgs = { inherit user; };
+
+      modules = [ ./home/base.nix ];
+
+    };
+
   in {
 
-    # ── Darwin machines ────────────────────────────────────────────────────
-    # scripts/new-machine.sh inserts new entries directly above the marker.
-    # "darwin-workstation" = work MacBook Pro (macOS account "Fredric.Hegland").
-    # "darwin-air" = personal MacBook Air (macOS account "v1s"). These two
-    # machines have different local usernames, so they need separate flake
-    # entries — do not merge them back into one, it caused primaryUser
-    # activation failures when either machine's commit clobbered the other's.
-    darwinConfigurations."darwin-workstation" = mkDarwinSystem { user = "Fredric.Hegland"; };
-    darwinConfigurations."darwin-air" = mkDarwinSystem { user = "v1s"; };
-    # NEW_DARWIN_MACHINE_MARKER
+    # ── hades — macOS laptop (fixed) ────────────────────────────────────────
+    darwinConfigurations."hades" = mkDarwinSystem { user = "v1s"; hostName = "hades"; };
 
-    # ── Linux machines (standalone Home Manager, no NixOS) ─────────────────
-    # scripts/new-machine.sh inserts new entries directly above the marker.
-    homeConfigurations."linux-workstation" = mkLinuxSystem { user = "Fredric.Hegland"; };
-    # NEW_LINUX_MACHINE_MARKER
-
-    # ── Darwin machines: standalone home-only builds (fast iteration) ──────
-    homeConfigurations."darwin-workstation-home" = mkDarwinHomeOnly { user = "Fredric.Hegland"; };
-    homeConfigurations."darwin-air-home" = mkDarwinHomeOnly { user = "v1s"; };
-
-    # ── NixOS machines ──────────────────────────────────────────────────────
-    # "kratos" = the stationary NixOS machine. Dedicated attribute name (not
-    # a generic role name) since this hardware module is machine-specific and
-    # will never be reused by another box.
+    # ── kratos — NixOS homelab desktop (fixed) ──────────────────────────────
     nixosConfigurations."kratos" = mkNixosSystem {
       user = "v1s";
       hostName = "kratos";
-      hardwareModule = ./hosts/nixos-workstation-hardware.nix;
+      hardwareModule = ./hosts/kratos-hardware.nix;
+    };
+
+    # ── base-only machines ───────────────────────────────────────────────────
+    # scripts/new-machine.sh inserts new entries directly above the marker.
+    # Empty by default — most quick/ephemeral use goes through
+    # scripts/bootstrap-base.sh instead, which needs no entry here at all.
+    homeConfigurations = {
+      # NEW_BASE_MACHINE_MARKER
     };
 
   };

@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────────────────
-#  new-machine.sh — interactive wizard to register a new machine in flake.nix
+#  new-machine.sh — register a new permanent base-only machine in flake.nix
 #
-#  Handles the common case: reusing hosts/darwin-workstation.nix or
-#  home/linux.nix with a new username / hostname. For a genuinely new role
-#  (different casks, different Linux behavior), copy a host/home module by
-#  hand first — see docs/adding-machines.md.
+#  hades and kratos are fixed, named machines — not registered through this
+#  wizard. This is for a different case: a machine you want tracked as a
+#  real flake entry (rather than the ephemeral scripts/bootstrap-base.sh
+#  path) but that doesn't need its own role yet — just home/base.nix.
+#
+#  If it later needs real extras (its own casks/services/packages), copy the
+#  pattern in home/hades.nix or home/kratos.nix: add a home/<name>.nix module
+#  and list it alongside home/base.nix in this machine's flake.nix entry.
 #
 #  Every value has a detected default shown in [brackets] — press enter to
 #  accept it, or type something else.
@@ -18,8 +22,10 @@ FLAKE="$REPO_ROOT/flake.nix"
 cd "$REPO_ROOT"
 
 echo "══════════════════════════════════════════════════════════════════"
-echo "  New machine setup wizard"
+echo "  New base-only machine setup wizard"
 echo "══════════════════════════════════════════════════════════════════"
+echo ""
+echo "Fixed machines (not managed by this wizard): hades (macOS), kratos (NixOS)."
 echo ""
 
 prompt() {
@@ -37,62 +43,37 @@ confirm() {
 }
 
 case "$(uname -s)" in
-  Darwin) PLATFORM="darwin" ;;
-  Linux)  PLATFORM="linux" ;;
+  Darwin) DEFAULT_SYSTEM="aarch64-darwin" ;;
+  Linux)
+    case "$(uname -m)" in
+      aarch64|arm64) DEFAULT_SYSTEM="aarch64-linux" ;;
+      *)             DEFAULT_SYSTEM="x86_64-linux" ;;
+    esac
+    ;;
   *) echo "Unsupported platform: $(uname -s)" >&2; exit 1 ;;
 esac
-echo "Detected platform: $PLATFORM"
+echo "Detected system: $DEFAULT_SYSTEM"
 echo ""
 
-echo "Currently registered machines:"
-grep -E 'darwinConfigurations\.|homeConfigurations\.' "$FLAKE" | sed 's/^[[:space:]]*/  /'
+echo "Currently registered base-only machines:"
+grep -E 'homeConfigurations\."' "$FLAKE" | sed 's/^[[:space:]]*/  /' || echo "  (none yet)"
 echo ""
 
 DEFAULT_USER="${USER:-$(whoami)}"
+DEFAULT_NAME="$(hostname -s 2>/dev/null || echo new-machine)"
 
-if [ "$PLATFORM" = "darwin" ]; then
-  DEFAULT_NAME="darwin-workstation"
-  CURRENT_COMPUTER_NAME="$(scutil --get ComputerName 2>/dev/null || echo "unknown")"
-  echo "This Mac's current Computer Name: $CURRENT_COMPUTER_NAME"
-  echo "(Default is to leave it untouched — nothing renames your Mac unless"
-  echo " you explicitly set an override below.)"
-  echo ""
+prompt NAME "Flake attribute name for this machine" "$DEFAULT_NAME"
+prompt MACHINE_USER "Account username on this machine" "$DEFAULT_USER"
+prompt SYSTEM "nixpkgs system string" "$DEFAULT_SYSTEM"
 
-  prompt NAME "Flake attribute name for this machine" "$DEFAULT_NAME"
-  prompt MACHINE_USER "macOS account username on this machine" "$DEFAULT_USER"
-  prompt HOSTNAME_OVERRIDE "Computer Name override (blank = keep current)" ""
-
-  if grep -q "darwinConfigurations\.\"$NAME\"" "$FLAKE"; then
-    echo "error: darwinConfigurations.\"$NAME\" already exists in flake.nix" >&2
-    exit 1
-  fi
-
-  if [ -n "$HOSTNAME_OVERRIDE" ]; then
-    NEW_LINE="    darwinConfigurations.\"$NAME\" = mkDarwinSystem { user = \"$MACHINE_USER\"; hostName = \"$HOSTNAME_OVERRIDE\"; };"
-  else
-    NEW_LINE="    darwinConfigurations.\"$NAME\" = mkDarwinSystem { user = \"$MACHINE_USER\"; };"
-  fi
-
-  MARKER="# NEW_DARWIN_MACHINE_MARKER"
-  APPLY_CMD="sudo nix run nix-darwin -- switch --flake $REPO_ROOT#$NAME"
-  MAKE_VAR="DARWIN_TARGET"
-
-else
-  DEFAULT_NAME="linux-workstation"
-
-  prompt NAME "Flake attribute name for this machine" "$DEFAULT_NAME"
-  prompt MACHINE_USER "Linux account username on this machine" "$DEFAULT_USER"
-
-  if grep -q "homeConfigurations\.\"$NAME\"" "$FLAKE"; then
-    echo "error: homeConfigurations.\"$NAME\" already exists in flake.nix" >&2
-    exit 1
-  fi
-
-  NEW_LINE="    homeConfigurations.\"$NAME\" = mkLinuxSystem { user = \"$MACHINE_USER\"; };"
-  MARKER="# NEW_LINUX_MACHINE_MARKER"
-  APPLY_CMD="home-manager switch --flake $REPO_ROOT#$NAME"
-  MAKE_VAR="LINUX_TARGET"
+if grep -q "homeConfigurations\.\"$NAME\"" "$FLAKE"; then
+  echo "error: homeConfigurations.\"$NAME\" already exists in flake.nix" >&2
+  exit 1
 fi
+
+NEW_LINE="      \"$NAME\" = mkBaseSystem { user = \"$MACHINE_USER\"; system = \"$SYSTEM\"; };"
+MARKER="# NEW_BASE_MACHINE_MARKER"
+APPLY_CMD="home-manager switch --flake $REPO_ROOT#$NAME"
 
 echo ""
 echo "── Summary ──────────────────────────────────────────────────────────"
@@ -120,17 +101,10 @@ echo "── Diff ────────────────────�
 git -C "$REPO_ROOT" diff -- flake.nix
 
 echo ""
-if confirm "Also set this as the default for 'make $PLATFORM' on this machine?"; then
-  mkdir -p "$REPO_ROOT/config/local"
-  echo "$MAKE_VAR := $NAME" >> "$REPO_ROOT/config/local/machine.mk"
-  echo "Wrote config/local/machine.mk (gitignored)."
-fi
-
-echo ""
 echo "══════════════════════════════════════════════════════════════════"
 echo "  Done. Next steps:"
 echo ""
-echo "  1. Review the diff above (and config/local/machine.mk if written)"
+echo "  1. Review the diff above"
 echo "  2. Apply:"
 echo "       $APPLY_CMD"
 echo "  3. Commit flake.nix when you're happy with it:"

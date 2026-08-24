@@ -2,21 +2,17 @@
 
 # Architecture
 
-The repository is structured around platform roles rather than machine names.
+The repository is built around three tiers, each extending the one before it:
 
-Machines are expected to fit into one of a few categories:
+- **base** — cross-platform CLI foundation (shell, tmux, a fully-LSP'd
+  neovim, core tools). No fixed machine name. Runs anywhere via
+  `scripts/bootstrap-base.sh`, or as a registered flake entry for a
+  permanent-but-simple machine.
+- **hades** — the one macOS laptop. base + macOS-specific extras.
+- **kratos** — the NixOS homelab desktop. base + homelab-specific extras.
 
-- Darwin workstation
-- Darwin laptop
-- Linux workstation
-- Linux server
-- Linux ML machine
-
-The goal is to separate:
-
-- shared configuration
-- platform-specific configuration
-- host-specific overrides
+`hades` and `kratos` are fixed, named machines — not an open-ended registry.
+Anything else uses the base tier.
 
 ---
 
@@ -36,23 +32,17 @@ dotfiles_nix/
 
 # flake.nix
 
-Defines all available configurations via two builder functions,
-`mkDarwinSystem` and `mkLinuxSystem`. Each known machine is a single
-registry entry passing in its `user` (and, for Darwin, an optional
-`hostName`) — no username or machine name is hardcoded anywhere else in the
-repo. See `docs/adding-machines.md` for how to register a new machine.
+Defines three builder functions:
 
-Typical structure:
+- `mkDarwinSystem` — full nix-darwin system, used once for `hades`.
+- `mkNixosSystem` — full NixOS system, used once for `kratos`.
+- `mkBaseSystem` — standalone Home Manager on `home/base.nix` only, for any
+  future machine registered under `homeConfigurations` that doesn't need a
+  dedicated role.
 
-- `darwinConfigurations`
-- `homeConfigurations`
-
-The flake connects:
-
-- nixpkgs
-- home-manager
-- nix-darwin
-- platform modules
+No username or machine name is hardcoded anywhere outside `flake.nix` itself
+— `user`/`hostName` are passed through as module arguments. See
+`docs/adding-machines.md` for registering a new base-only machine.
 
 ---
 
@@ -60,49 +50,55 @@ The flake connects:
 
 Contains Home Manager modules.
 
-## default.nix
+## base.nix
 
-Shared configuration across all machines:
+The shared foundation, imported by every machine:
 
-- CLI packages
-- zsh
-- git
+- shell (zsh)
 - tmux
-- ghostty
-- shell aliases
-- common environment variables
+- neovim (full config, all LSPs/formatters)
+- core CLI packages (navigation, search, dev, monitoring, etc.)
+- git
+- ghostty config, btop theme, yazi config
 
-## darwin.nix
+## hades.nix
 
-macOS-specific configuration:
+macOS-only extras, imported on top of `base.nix`:
 
-- AeroSpace
-- SketchyBar
-- Karabiner
-- Homebrew-related integration
+- AeroSpace, SketchyBar, Karabiner config
+- Docker CLI (colima + docker-client + docker-compose)
+- Zathura app wrapper + activation hooks
 
-## linux.nix
+## kratos.nix
 
-Linux-specific configuration:
+NixOS-homelab-only extras, imported on top of `base.nix`:
 
-- Linux GUI packages
+- Zathura (nixpkgs build)
 - Syncthing service
-- Linux-only environment behavior
+- SSH agent shell init
 
 ---
 
 # hosts/
 
-Contains host-level nix-darwin system configuration.
+Contains host-level system configuration (nix-darwin or NixOS).
 
-Examples:
+## hades.nix
 
-- Homebrew casks
-- macOS system defaults
-- fonts
-- launchd services
+macOS system config: Homebrew (casks + formulas), fonts, launchd agents
+(SketchyBar), macOS system defaults.
 
-Linux currently uses only Home Manager.
+## kratos.nix / kratos-hardware.nix
+
+Full NixOS system config: networking, boot loader, NVIDIA GPU stack,
+Docker + GPU passthrough, Tailscale + SSH. `kratos-hardware.nix` is the
+machine-generated hardware config (from `nixos-generate-config`) — do not
+hand-edit it.
+
+There is no `hosts/` module for the base tier — it never touches
+system-level config (Homebrew, launchd, NixOS modules). That's the point:
+it's safe to apply anywhere without root-level side effects beyond Nix
+itself.
 
 ---
 
@@ -125,7 +121,7 @@ These are symlinked into the home directory by Home Manager via `home.file`.
 
 Two exceptions worth knowing: `tmux.conf` and Neovim's `init.lua` are **not**
 raw files here — they're generated inline from the `programs.tmux` /
-`programs.neovim` blocks in `home/default.nix`. Editing anything under
+`programs.neovim` blocks in `home/base.nix`. Editing anything under
 `config/tmux/tmux.conf` or `config/nvim/init.lua` would have no effect, which
 is why those files were removed rather than kept as stale duplicates.
 
@@ -133,13 +129,11 @@ is why those files were removed rather than kept as stale duplicates.
 
 # scripts/
 
-Bootstrap and utility scripts.
-
-Examples:
-
-- Linux bootstrap
-- migration helpers
-- sync helpers
+- `bootstrap-base.sh` — installs Nix if needed, then applies the base tier
+  standalone (no flake.nix registry entry required). The quick-install path.
+- `new-machine.sh` — interactive wizard to register a new **base-only**
+  permanent machine in `flake.nix`. `hades`/`kratos` are not managed by this
+  wizard — they're fixed entries.
 
 ---
 
@@ -161,4 +155,3 @@ External tools manage:
 - NVIDIA drivers
 
 Nix should not manage mutable development environments.
-

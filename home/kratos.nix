@@ -1,31 +1,21 @@
 { pkgs, lib, user, ... }: {
 
-  home.username = user;
-  home.homeDirectory = "/home/${user}";
-
+  # ── KRATOS — NixOS homelab extras ──────────────────────────────────────────
+  # Imported on top of home/base.nix. home.username/homeDirectory are set
+  # there, not here.
+  #
   # nixpkgs.config.allowUnfree is set where `pkgs` is constructed instead of
-  # here: this module is shared between standalone Home Manager (Kubuntu,
-  # see mkLinuxSystem in flake.nix) and full NixOS (see
-  # hosts/nixos-workstation.nix), and setting it here conflicts with
-  # `home-manager.useGlobalPkgs` on the NixOS side.
+  # here (see hosts/kratos.nix) — setting it here would conflict with
+  # `home-manager.useGlobalPkgs`.
 
   # ── Linux-only packages ───────────────────────────────────────────────────
-  # ghostty, discord, thunderbird, nerd-fonts are already in default.nix
-  # under lib.optionals pkgs.stdenv.isLinux — add anything extra here.
+  # ghostty and nerd-fonts are already in base.nix under
+  # lib.optionals pkgs.stdenv.isLinux — add anything extra here.
   home.packages = with pkgs; [
-    # RISC-V cross-compilation toolchain
-    # The helpers (rvasmrun, rvgccrun) are defined in zsh config.
-    # On Kubuntu you may prefer: sudo apt install gcc-riscv64-linux-gnu qemu-user
-    # Uncomment to manage via Nix instead:
-    # pkgsCross.riscv64-embedded.buildPackages.gcc
-    # qemu
-
     # PDF viewer used by yazi's opener (config/yazi/yazi.toml). Unlike macOS
-    # (Homebrew formula, needs a manual plugin symlink — see home/darwin.nix),
+    # (Homebrew formula, needs a manual plugin symlink — see home/hades.nix),
     # nixpkgs' zathura bundles the mupdf backend at build time, so no extra
-    # setup is needed. On this machine there's no display server yet (CLI-only
-    # NixOS box), so it won't actually open anything until one exists — safe
-    # to have installed regardless, ready for when a desktop is added.
+    # setup is needed.
     zathura
   ];
 

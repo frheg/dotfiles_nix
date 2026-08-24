@@ -120,7 +120,78 @@ This switches the system symlink back to the previous generation.
 
 ---
 
-# Linux (Home Manager)
+# kratos (NixOS)
+
+Full NixOS system — generations are managed by `nixos-rebuild`, distinct
+from a plain Home Manager rollback.
+
+## List generations
+
+```bash
+sudo nixos-rebuild --list-generations
+```
+
+or:
+
+```bash
+make generations
+```
+
+## Rollback (no reboot required)
+
+```bash
+sudo nixos-rebuild switch --rollback
+```
+
+or:
+
+```bash
+make rollback
+```
+
+This re-activates the previous generation live, in the current boot session
+— no reboot needed, and it works over SSH exactly like any other
+`nixos-rebuild switch`.
+
+## Rollback via the boot menu (if a reboot already happened, or the machine
+## is otherwise unreachable over SSH/Tailscale)
+
+`boot.loader.systemd-boot.configurationLimit = 20` (see `hosts/kratos.nix`)
+keeps the last 20 generations bootable. At boot, systemd-boot shows a menu
+listing every generation — select an older one with the keyboard to boot
+into it. This requires physical console access (or an out-of-band remote
+console/KVM/IPMI if the machine has one) — there is no automatic
+"health-check and roll back" behavior built into NixOS. A generation that
+boots but breaks SSH/Tailscale will stay broken until something reboots it
+into an older generation manually.
+
+## Safer pattern for a headless/remote machine
+
+Prefer `nixos-rebuild test` over `switch` for the first apply of a risky
+change:
+
+```bash
+sudo nixos-rebuild test --flake .#kratos
+```
+
+`test` activates the new configuration for the *current* boot only — it
+does **not** change which generation the boot loader defaults to. If it
+breaks something, the next reboot (however it happens) falls back to the
+previous generation automatically, without needing to touch the boot menu.
+Once you've confirmed the live system is still reachable and working, make
+it permanent:
+
+```bash
+sudo nixos-rebuild switch --flake .#kratos
+```
+
+(`switch` = `test` + also sets the new generation as the boot default;
+`boot` sets the new generation as the boot default *without* activating it
+now, for a change you want to apply on next natural reboot instead.)
+
+---
+
+# base tier (standalone Home Manager)
 
 Home Manager creates user-level generations.
 
@@ -273,16 +344,22 @@ make generations
 
 ## Apply changes
 
-macOS:
+hades (macOS):
 
 ```bash
-make darwin
+make hades
 ```
 
-Linux:
+kratos (NixOS):
 
 ```bash
-make linux
+make kratos
+```
+
+Anywhere else (base tier):
+
+```bash
+make base
 ```
 
 ## Validate
@@ -299,13 +376,25 @@ make push
 
 ## Rollback if broken
 
-macOS:
+hades (macOS):
 
 ```bash
 make rollback
 ```
 
-Linux:
+kratos (NixOS):
+
+```bash
+make rollback
+```
+
+Or manually:
+
+```bash
+sudo nixos-rebuild switch --rollback
+```
+
+base tier (standalone Home Manager):
 
 ```bash
 home-manager generations
@@ -363,15 +452,17 @@ This means:
 ## Rebuild
 
 ```bash
-make darwin
-make linux
+make hades
+make kratos
+make base
 ```
 
 ## Sync
 
 ```bash
-make sync-darwin
-make sync-linux
+make sync-hades
+make sync-kratos
+make sync-base
 ```
 
 ## Validation

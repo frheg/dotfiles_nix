@@ -1,5 +1,14 @@
 { pkgs, lib, user, ... }: {
 
+  # ── BASE — the common foundation for every machine ────────────────────────
+  # Cross-platform (macOS/Linux/WSL): shell, tmux, a fully-LSP'd neovim, and
+  # core CLI tools. Installed standalone via scripts/bootstrap-base.sh for
+  # quick/anywhere use, or imported by hades.nix/kratos.nix (+ their own
+  # platform/role extras) for the two named full-machine builds.
+
+  home.username        = user;
+  home.homeDirectory   = lib.mkForce (if pkgs.stdenv.isDarwin then "/Users/${user}" else "/home/${user}");
+
   home.stateVersion        = "25.05";
   programs.home-manager.enable = true;
 
@@ -28,6 +37,7 @@
     typst
     tinymist          # typst LSP
     claude-code       # Claude Code CLI
+    pi-coding-agent   # pi coding agent CLI (badlogic/pi-mono)
 
     # ── System monitoring ─────────────────────────────────────────────────
     # Wrapped so /run/opengl-driver/lib (where libnvml.so.1 lives) is on the
@@ -41,10 +51,6 @@
           --prefix LD_LIBRARY_PATH : /run/opengl-driver/lib
       '';
     })
-
-    # ── Email ─────────────────────────────────────────────────────────────
-    aerc
-    w3m
 
     # ── Network ───────────────────────────────────────────────────────────
     wget
@@ -62,7 +68,6 @@
 
     # ── Productivity ──────────────────────────────────────────────────────
     fastfetch
-    pay-respects
     watchexec
     pandoc
 
@@ -107,21 +112,14 @@
     asm-lsp                          # x86/RISC-V assembly language server
     shfmt                            # Bash formatter
 
-    # ── Misc ──────────────────────────────────────────────────────────────
-    sl                # important productivity tool 🚂
-
   ] ++ lib.optionals pkgs.stdenv.isLinux [
     # ── Linux: clipboard integration for Neovim/tmux/terminal ──────────────
     wl-clipboard                     # Wayland clipboard provider: wl-copy/wl-paste
     xclip                            # X11 clipboard fallback
-    
-    # ── Linux: fonts (on macOS these are in hosts/darwin-workstation.nix fonts.packages)
+
+    # ── Linux: fonts (on macOS these are in hosts/hades.nix fonts.packages)
     nerd-fonts.iosevka
     newcomputermodern
-
-    # ── Linux: GUI apps (comment out if you prefer to keep these as snaps)
-    discord
-    thunderbird
 
     # ── Linux: ghostty (on macOS it's a Homebrew cask)
     ghostty
@@ -179,30 +177,6 @@
 
       # ── cd then ls ─────────────────────────────────────────────────────
       function cdl() { builtin cd "$@" && ls; }
-
-      # ── RISC-V helpers ─────────────────────────────────────────────────
-      # Tools: riscv64-linux-gnu-{as,ld,gcc} + qemu-riscv64
-      # Linux: sudo apt install gcc-riscv64-linux-gnu qemu-user
-      # macOS: brew install riscv64-elf-binutils qemu (adjust prefixes)
-      alias rvrun='qemu-riscv64'
-      rvasmrun() {
-        local f="$1" out="''${2:-''${1%.*}}"
-        riscv64-linux-gnu-as  "$f"    -o "$out.o" &&
-        riscv64-linux-gnu-ld  "$out.o" -o "$out"  &&
-        qemu-riscv64 "./$out"
-      }
-      rvgccrun() {
-        local f="$1" out="''${2:-''${1%.*}}"
-        riscv64-linux-gnu-gcc -O0 -g -static "$f" -o "$out" &&
-        qemu-riscv64 "./$out"
-      }
-      rvhelp() { cat <<'RISCVEOF'
-RISC-V helpers
-  rvrun   <elf>            run a RISC-V ELF with QEMU user-mode
-  rvasmrun <file.s> [out]  assemble + link + run (requires _start)
-  rvgccrun <file.c> [out]  compile static + run
-RISCVEOF
-      }
 
       # ── SSH greeting (first shell only, not inside tmux panes) ────────────
       if [[ -z "$TMUX" && -n "$SSH_CONNECTION" ]]; then
@@ -554,12 +528,6 @@ RISCVEOF
   home.file.".config/ghostty/themes/catppuccin-macchiato".source = ../config/ghostty/themes/catppuccin-macchiato;
 
   home.file.".config/ghostty/themes/catppuccin-latte".source = ../config/ghostty/themes/catppuccin-latte;
-
-  # ── AERC CONFIG ──────────────────────────────────────────────────────────
-  # accounts.conf is NOT managed here — set it up manually per machine.
-  home.file.".config/aerc/aerc.conf".source = ../config/aerc/aerc.conf;
-  home.file.".config/aerc/binds.conf".source = ../config/aerc/binds.conf;
-  home.file.".config/aerc/signature".source = ../config/aerc/signature;
 
   # ── BTOP CONFIG ──────────────────────────────────────────────────────────
   home.file.".config/btop/themes/catppuccin_mocha.theme".source = ../config/btop/themes/catppuccin_mocha.theme;

@@ -102,20 +102,12 @@
   virtualisation.docker.enable = true;
   hardware.nvidia-container-toolkit.enable = true;
 
-  # ── Gaming (secondary priority, nice to have) ───────────────────────────────
-  programs.steam = {
-    enable = true;
-    remotePlay.openFirewall = true;
-    dedicatedServer.openFirewall = false;
-  };
-  programs.gamemode.enable = true;
-
   # ── Locale / time zone ──────────────────────────────────────────────────────
   # TODO: set your actual time zone, e.g. "Europe/Oslo".
   # time.timeZone = "Europe/Oslo";
 
   # ── State version ───────────────────────────────────────────────────────────
-  # Set once at install time, matching home.stateVersion in home/default.nix.
+  # Set once at install time, matching home.stateVersion in home/base.nix.
   # Per NixOS convention, do NOT bump this on upgrades — it's not a version
   # pin, it's a marker of the format this system was originally created with.
   system.stateVersion = "25.05";

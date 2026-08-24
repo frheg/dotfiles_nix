@@ -11,7 +11,7 @@ config-version = 2
 
 #####
 # NOTE: sketchybar is NOT started here — it already autostarts via its own
-# nix-darwin launchd agent (RunAtLoad = true, see hosts/darwin-workstation.nix).
+# nix-darwin launchd agent (RunAtLoad = true, see hosts/hades.nix).
 # Starting it here too would race the launchd agent for the same daemon socket.
 #
 # AeroSpace itself runs with a bare launchd PATH (/usr/bin:/bin:/usr/sbin:/sbin),

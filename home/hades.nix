@@ -1,18 +1,18 @@
 { pkgs, lib, user, ... }: {
 
-  home.username      = user;
-  home.homeDirectory = lib.mkForce "/Users/${user}";
-
+  # ── HADES — macOS laptop extras ────────────────────────────────────────────
+  # Imported on top of home/base.nix. home.username/homeDirectory are set
+  # there, not here.
 
   # ── macOS-only packages ───────────────────────────────────────────────────
   home.packages = with pkgs; [
-    sketchybar   # status bar (binary; launch agent is in hosts/darwin-workstation.nix)
+    sketchybar   # status bar (binary; launch agent is in hosts/hades.nix)
     blueutil     # Bluetooth CLI, used by sketchybar's bluetooth plugin
-    # Note: opencode is in hosts/darwin-workstation.nix homebrew.brews (not yet in nixpkgs)
+    # Note: opencode is in hosts/hades.nix homebrew.brews (not yet in nixpkgs)
 
     # Docker (no Docker Desktop on macOS): colima runs the Linux VM + daemon,
     # docker-client provides the bare `docker` CLI, docker-compose adds
-    # `docker compose`. Aliases (d/dc/dcu/...) already live in home/default.nix.
+    # `docker compose`. Aliases (d/dc/dcu/...) already live in home/base.nix.
     # Not started automatically — run `colima start` when you need Docker.
     colima
     docker-client
@@ -69,12 +69,10 @@
   };
 
   # ── AeroSpace ─────────────────────────────────────────────────────────────
-  # TODO: run `find ~ -name "aerospace.toml" 2>/dev/null` to locate your config,
-  # then copy it to config/aerospace.toml in this repo and uncomment the line below.
   home.file.".config/aerospace/aerospace.toml".source = ../config/aerospace.toml;
 
   # ── Zathura ───────────────────────────────────────────────────────────────
-  # zathura itself is installed via Homebrew (hosts/darwin-workstation.nix),
+  # zathura itself is installed via Homebrew (hosts/hades.nix),
   # not Nix, but its config is still declarative here.
   home.file.".config/zathura/zathurarc".source = ../config/zathura/zathurarc;
 

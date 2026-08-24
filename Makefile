@@ -1,44 +1,36 @@
 FLAKE := $(shell pwd)
 
-# Which flake attribute this machine builds. Defaults match the two
-# machines registered in flake.nix today. If you register a machine under a
-# different name (see docs/adding-machines.md), override it locally in
-# config/local/machine.mk (gitignored — never committed) with e.g.:
-#   DARWIN_TARGET := darwin-laptop
-DARWIN_TARGET ?= darwin-workstation
-LINUX_TARGET  ?= linux-workstation
-NIXOS_TARGET  ?= kratos
+# Which flake attribute the two fixed machines build. Only worth overriding
+# in config/local/machine.mk (gitignored) if you're testing against a fork
+# or a differently-named entry.
+HADES_TARGET  ?= hades
+KRATOS_TARGET ?= kratos
 
 -include config/local/machine.mk
 
-.PHONY: darwin darwin-home linux nixos sync-darwin sync-linux sync-nixos update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync yazi-sync new-machine docs status
+.PHONY: hades base kratos sync-hades sync-base sync-kratos update push pull check help rollback generations gc gc-dry gc-delete-old nvim-sync yazi-sync new-machine docs status
 
 # ─────────────────────────────────────────────────────────────
 # System rebuilds
 # ─────────────────────────────────────────────────────────────
-darwin:
-	sudo -H nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake $(FLAKE)\#$(DARWIN_TARGET)
+hades:
+	sudo -H nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake $(FLAKE)\#$(HADES_TARGET)
 
-# Fast path for dotfiles-only changes (tmux, sketchybar, karabiner, shell,
-# etc.) — skips nix-darwin's system activation (Homebrew, launchd, system
-# defaults). Anything touching hosts/darwin-workstation.nix still needs
-# `make darwin`.
-darwin-home:
-	nix --extra-experimental-features "nix-command flakes" run home-manager -- switch --flake $(FLAKE)\#$(DARWIN_TARGET)-home
+kratos:
+	sudo nixos-rebuild switch --flake $(FLAKE)\#$(KRATOS_TARGET)
 
-linux:
-	nix run home-manager -- switch --flake $(FLAKE)\#$(LINUX_TARGET)
-
-nixos:
-	sudo nixos-rebuild switch --flake $(FLAKE)\#$(NIXOS_TARGET)
+# base tier: any other machine (quick installs, servers, WSL, a registered
+# base-only machine). No flake attribute required — see scripts/bootstrap-base.sh.
+base:
+	./scripts/bootstrap-base.sh
 
 rebuild:
 	@if [[ "$$(uname)" == "Darwin" ]]; then \
-		$(MAKE) darwin; \
+		$(MAKE) hades; \
 	elif [ -e /etc/NIXOS ]; then \
-		$(MAKE) nixos; \
+		$(MAKE) kratos; \
 	else \
-		$(MAKE) linux; \
+		$(MAKE) base; \
 	fi
 
 # ─────────────────────────────────────────────────────────────
@@ -47,11 +39,11 @@ rebuild:
 pull:
 	git pull --rebase
 
-sync-darwin: pull darwin
+sync-hades: pull hades
 
-sync-linux: pull linux
+sync-kratos: pull kratos
 
-sync-nixos: pull nixos
+sync-base: pull base
 
 # ─────────────────────────────────────────────────────────────
 # Updates
@@ -211,7 +203,7 @@ rollback:
 
 # On Darwin and NixOS, system generations live in a root-owned profile
 # (/nix/var/nix/profiles/system), so collecting them needs sudo. Standalone
-# Home Manager (Kubuntu etc.) only owns a user profile, so it doesn't.
+# Home Manager (base tier) only owns a user profile, so it doesn't.
 gc-dry:
 	@if [[ "$$(uname)" == "Darwin" ]] || [ -e /etc/NIXOS ]; then \
 		sudo nix store gc --dry-run; \
@@ -245,16 +237,16 @@ help:
 	@echo "dotfiles_nix command interface"
 	@echo ""
 	@echo "System rebuilds:"
-	@echo "  make darwin        Apply macOS nix-darwin + Home Manager config"
-	@echo "  make linux         Apply Linux Home Manager config (standalone, non-NixOS)"
-	@echo "  make nixos         Apply full NixOS system + Home Manager config"
+	@echo "  make hades         Apply hades (macOS nix-darwin + Home Manager) config"
+	@echo "  make kratos        Apply kratos (full NixOS + Home Manager) config"
+	@echo "  make base          Apply the base tier (any other machine — see scripts/bootstrap-base.sh)"
 	@echo "  make rebuild       Auto-detect OS and apply correct config"
 	@echo ""
 	@echo "Sync between machines:"
 	@echo "  make pull          Pull latest Git changes with rebase"
-	@echo "  make sync-darwin   Pull latest changes, then rebuild macOS"
-	@echo "  make sync-linux    Pull latest changes, then rebuild Linux"
-	@echo "  make sync-nixos    Pull latest changes, then rebuild NixOS"
+	@echo "  make sync-hades    Pull latest changes, then rebuild hades"
+	@echo "  make sync-kratos   Pull latest changes, then rebuild kratos"
+	@echo "  make sync-base     Pull latest changes, then re-apply the base tier"
 	@echo ""
 	@echo "Updates:"
 	@echo "  make update        Update flake.lock inputs"
@@ -271,7 +263,7 @@ help:
 	@echo "  make yazi-sync     Fetch yazi flavors/plugins declared in package.toml"
 	@echo ""
 	@echo "New machine:"
-	@echo "  make new-machine   Interactive wizard to register a new machine in flake.nix"
+	@echo "  make new-machine   Interactive wizard to register a new base-only machine in flake.nix"
 	@echo ""
 	@echo "Diagnostics:"
 	@echo "  make check         Show Git status, flake outputs/eval check, and Neovim health"
@@ -279,7 +271,7 @@ help:
 	@echo ""
 	@echo "Typical flows:"
 	@echo "  Edit config -> make rebuild -> make push"
-	@echo "  New machine sync -> make sync-darwin or make sync-linux"
+	@echo "  New machine sync -> make sync-hades, make sync-kratos, or make sync-base"
 	@echo "  Broken Neovim plugins -> make nvim-reset"
 	@echo ""
 	@echo "Rollback / cleanup:"
