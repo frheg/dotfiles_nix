@@ -82,7 +82,7 @@ status:
 	@echo ""
 	@echo "── Generations ──────────────────────────────"
 	@if [[ "$$(uname)" == "Darwin" ]]; then \
-		darwin-rebuild --list-generations | tail -n 5; \
+		sudo darwin-rebuild --list-generations | tail -n 5; \
 	elif [ -e /etc/NIXOS ]; then \
 		sudo nixos-rebuild --list-generations | tail -n 5; \
 	else \
@@ -175,7 +175,7 @@ doctor:
 generations:
 	@if [[ "$$(uname)" == "Darwin" ]]; then \
 		echo "── nix-darwin generations ──"; \
-		darwin-rebuild --list-generations; \
+		sudo darwin-rebuild --list-generations; \
 	elif [ -e /etc/NIXOS ]; then \
 		echo "── NixOS generations ──"; \
 		sudo nixos-rebuild --list-generations; \
