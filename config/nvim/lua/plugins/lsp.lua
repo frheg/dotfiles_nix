@@ -35,6 +35,7 @@ return {
         zls = {},
         lemminx = {},
         asm_lsp = {},
+        tinymist = { filetypes = { "typst" } },
       }
 
       for name, opts in pairs(servers) do

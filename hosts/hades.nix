@@ -58,19 +58,18 @@
 
     # zathura lives in a third-party tap (it's unsupported in homebrew/core on
     # macOS). Declared here so a fresh machine taps it automatically instead of
-    # relying on a manual `brew tap`.
-    taps = [ "zegervdv/zathura" ];
+    # relying on a manual `brew tap`. Homebrew redirected the upstream tap from
+    # zegervdv/zathura to homebrew-zathura/zathura — use the new name directly
+    # to avoid the ambiguous-formula error `brew bundle` throws when both the
+    # old and new tap aliases resolve the same formula.
+    taps = [ "homebrew-zathura/zathura" ];
 
-    # Fully-qualified formula names (tap/name). The same upstream repo is
-    # reachable under two tap aliases on this machine — zegervdv/zathura and
-    # homebrew-zathura/zathura (a Homebrew tap-migration artifact) — so a bare
-    # "zathura" is ambiguous and `brew bundle` aborts. Qualifying resolves it.
     brews = [
-      "zegervdv/zathura/zathura"
-      "zegervdv/zathura/zathura-pdf-mupdf"
-      "zegervdv/zathura/zathura-djvu"
-      "zegervdv/zathura/zathura-ps"
-      "zegervdv/zathura/zathura-cb"
+      "homebrew-zathura/zathura/zathura"
+      "homebrew-zathura/zathura/zathura-pdf-mupdf"
+      "homebrew-zathura/zathura/zathura-djvu"
+      "homebrew-zathura/zathura/zathura-ps"
+      "homebrew-zathura/zathura/zathura-cb"
       # opencode not yet packaged in nixpkgs
       "opencode"
       # sets zathura as default PDF handler (see home/hades.nix)

@@ -20,6 +20,17 @@ map("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "Delete buffer" })
 map("n", "<leader>bn", "<cmd>enew<CR>", { desc = "New buffer" })
 map("n", "<leader>bb", "<cmd>Telescope buffers<CR>", { desc = "List buffers" })
 
--- Move block of text 
+-- Move block of text
 map("v", "J", ":m '>+1<CR>gv=gv", { noremap = true, silent = true })
 map("v", "K", ":m '<-2<CR>gv=gv", { noremap = true, silent = true })
+
+-- Typst live preview (tinymist)
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "typst",
+  callback = function(args)
+    map("n", "<C-p>", function()
+      vim.system({ "tinymist", "preview", vim.api.nvim_buf_get_name(args.buf) }, { detach = true })
+      vim.notify("Typst preview started in browser", vim.log.levels.INFO)
+    end, { buffer = args.buf, desc = "Typst live preview (tinymist)" })
+  end,
+})
