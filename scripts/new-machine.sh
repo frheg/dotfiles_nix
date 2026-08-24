@@ -89,7 +89,7 @@ awk -v line="$NEW_LINE" -v marker="$MARKER" '
 
 echo ""
 echo "── Validating flake ─────────────────────────────────────────────────"
-if ! nix flake check --no-build; then
+if ! nix --extra-experimental-features "nix-command flakes" flake check --no-build; then
   echo ""
   echo "error: flake check failed after edit. Reverting flake.nix." >&2
   git -C "$REPO_ROOT" checkout -- flake.nix

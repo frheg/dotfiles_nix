@@ -49,7 +49,7 @@ sync-base: pull base
 # Updates
 # ─────────────────────────────────────────────────────────────
 update:
-	nix flake update
+	nix --extra-experimental-features "nix-command flakes" flake update
 
 # ─────────────────────────────────────────────────────────────
 # Git helpers
@@ -78,7 +78,7 @@ status:
 	@git rev-parse --short HEAD
 	@echo ""
 	@echo "── Flake metadata ───────────────────────────"
-	@nix flake metadata --json | jq -r '.revision // "dirty or local"'
+	@nix --extra-experimental-features "nix-command flakes" flake metadata --json | jq -r '.revision // "dirty or local"'
 	@echo ""
 	@echo "── Generations ──────────────────────────────"
 	@if [[ "$$(uname)" == "Darwin" ]]; then \
@@ -101,7 +101,7 @@ status:
 	@du -sh /nix/store 2>/dev/null || true
 	@echo ""
 	@echo "── Garbage collection preview ──────────────"
-	@nix store gc --dry-run 2>/dev/null | tail -n 10 || true
+	@nix --extra-experimental-features "nix-command flakes" store gc --dry-run 2>/dev/null | tail -n 10 || true
 
 # ─────────────────────────────────────────────────────────────
 # Neovim
@@ -139,10 +139,10 @@ check:
 	git status
 	@echo ""
 	@echo "── Flake outputs ─────────────────────────────"
-	@nix flake show
+	@nix --extra-experimental-features "nix-command flakes" flake show
 	@echo ""
 	@echo "── Flake evaluation check ────────────────────"
-	@nix flake check --no-build
+	@nix --extra-experimental-features "nix-command flakes" flake check --no-build
 	@echo ""
 	@echo "── Neovim health ─────────────────────────────"
 	@nvim --headless "+checkhealth" +qa || true
@@ -206,9 +206,9 @@ rollback:
 # Home Manager (base tier) only owns a user profile, so it doesn't.
 gc-dry:
 	@if [[ "$$(uname)" == "Darwin" ]] || [ -e /etc/NIXOS ]; then \
-		sudo nix store gc --dry-run; \
+		sudo nix --extra-experimental-features "nix-command flakes" store gc --dry-run; \
 	else \
-		nix store gc --dry-run; \
+		nix --extra-experimental-features "nix-command flakes" store gc --dry-run; \
 	fi
 
 gc:
