@@ -14,7 +14,11 @@ KRATOS_TARGET ?= kratos
 # System rebuilds
 # ─────────────────────────────────────────────────────────────
 hades:
-	sudo -H nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake $(FLAKE)\#$(HADES_TARGET)
+	@if command -v darwin-rebuild >/dev/null 2>&1; then \
+		sudo -H darwin-rebuild switch --flake $(FLAKE)\#$(HADES_TARGET); \
+	else \
+		sudo -H nix --extra-experimental-features "nix-command flakes" run nix-darwin -- switch --flake $(FLAKE)\#$(HADES_TARGET); \
+	fi
 
 kratos:
 	sudo nixos-rebuild switch --flake $(FLAKE)\#$(KRATOS_TARGET)
