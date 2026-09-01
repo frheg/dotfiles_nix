@@ -38,6 +38,7 @@
     tinymist          # typst LSP
     claude-code       # Claude Code CLI
     pi-coding-agent   # pi coding agent CLI (badlogic/pi-mono)
+    opencode          # opencode CLI
 
     # ── System monitoring ─────────────────────────────────────────────────
     # Wrapped so /run/opengl-driver/lib (where libnvml.so.1 lives) is on the
