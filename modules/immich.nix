@@ -16,5 +16,9 @@
     database.createDB = true;
   };
 
+  environment.systemPackages = with pkgs; [
+    immich-go
+  ];
+
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = [ 2283 ];
 }
