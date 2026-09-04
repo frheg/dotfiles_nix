@@ -9,5 +9,7 @@
     redis.enable = true;
   };
 
+  services.postgresql.settings.port = 5433;
+
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = [ 2283 ];
 }
