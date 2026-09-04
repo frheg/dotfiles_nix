@@ -1,7 +1,9 @@
 { config, pkgs, lib, user, hostName ? null, ... }:
 
 {
-  imports = [ ];
+  imports = [ 
+    ../modules/immich.nix 
+  ];
 
   # ── Networking / hostname ─────────────────────────────────────────────────
   # Unlike Darwin (which can inherit whatever Computer Name macOS setup gave
