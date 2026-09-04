@@ -13,12 +13,8 @@
     port = 2283;
     mediaLocation = "/var/lib/immich";
     redis.enable = true;
-
     database.createDB = true;
-    database.port = 5433;
   };
-
-  services.postgresql.settings.port = 5433;
 
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = [ 2283 ];
 }
